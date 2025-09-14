@@ -1,39 +1,70 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krusit</title>
-    @vite('resources/css/app.css')
-</head>
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen flex items-center justify-center">
-    <div class="max-w-3xl text-center text-white px-6">
-        <!-- Logo / Brand -->
-        <div class="mb-8">
-            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
-                Krusit
-            </h1>
-            <p class="mt-4 text-lg md:text-xl opacity-90">
-                Solusi kreatif untuk berbagi ide dan inovasi digital.
-            </p>
-        </div>
+<x-app-layout>
 
-        <!-- CTA Buttons -->
-        <div class="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
-            <a href="{{ route('register') }}"
-               class="px-6 py-3 bg-white text-indigo-700 font-semibold rounded-2xl shadow hover:bg-indigo-100 transition">
-               Daftar Sekarang
-            </a>
-            <a href="{{ route('login') }}"
-               class="px-6 py-3 bg-indigo-800/50 border border-white/30 text-white font-semibold rounded-2xl hover:bg-indigo-700 transition">
-               Masuk
-            </a>
-        </div>
+    <!-- Background Section -->
+    <div class="relative h-screen py-12 bg-center rounded-lg" style="background-image: url('/img/krusit2.png'); background-size: cover; background-position: center;">
 
-        <!-- Footer -->
-        <p class="mt-12 text-sm text-white/80">
-            &copy; {{ date('Y') }} Krusit. All rights reserved.
-        </p>
+        <div class="relative z-20 px-6 mx-auto max-w-7xl sm:px-8">
+            <div class="p-6 text-center">
+                <p class="text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
+                    Nikmati Setiap Menu Yang Murah
+                </p>
+                <p class="mt-2 text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
+                    Hanya Di <span class="font-extrabold text-orange-400 text-7xl">KRUSIT</span>
+                </p>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+
+    <!-- Quality Description Section -->
+    <section class="py-12 bg-orange-400">
+        <div class="container px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 text-white md:grid-cols-2 lg:grid-cols-2">
+                <!-- Halal Section -->
+                <div class="flex items-center transition transform hover:scale-105">
+
+                    <div>
+                        <h2 class="text-3xl font-bold">HALAL</h2>
+
+                    </div>
+                </div>
+                <!-- Crispy Section -->
+                <div class="flex items-center transition transform hover:scale-105">
+
+                    <div>
+                        <h2 class="text-3xl font-bold">CRISPY</h2>
+
+                    </div>
+                </div>
+                <!-- Segar Section -->
+                <div class="flex items-center transition transform hover:scale-105">
+
+                    <div>
+                        <h2 class="text-3xl font-bold">KRUNCHY</h2>
+
+                    </div>
+                </div>
+                <!-- Juicy Section -->
+                <div class="flex items-center transition transform hover:scale-105">
+
+                    <div>
+                        <h2 class="text-3xl font-bold">JUICY</h2>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="py-6 text-white bg-gray-900">
+        <div class="container mx-auto text-center">
+            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
+            <div class="flex justify-center mt-4 space-x-6">
+                <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
+                <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>
+                <a href="#" class="text-white transition hover:text-orange-400">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+</x-app-layout>
