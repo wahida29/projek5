@@ -1,68 +1,49 @@
 <x-app-layout>
 
-    <!-- Background Section -->
-    <div class="relative h-screen py-12 bg-center rounded-lg" style="background-image: url('/img/krusit2.png'); background-size: cover; background-position: center;">
+    <div class="relative flex items-center justify-center h-screen bg-center bg-cover" style="background-image: url('/img/krusit2.png');">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
 
-        <div class="relative z-20 px-6 mx-auto max-w-7xl sm:px-8">
-            <div class="p-6 text-center">
-                <p class="text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
-                    Nikmati Setiap Menu Yang Murah
-                </p>
-                <p class="mt-2 text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
-                    Hanya Di <span class="font-extrabold text-orange-400 text-7xl">KRUSIT</span>
-                </p>
-            </div>
+        <div class="relative z-10 px-4 text-center text-white">
+            <h1 class="text-5xl font-semibold md:text-6xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.8);">
+                Nikmati Setiap Menu Yang Murah
+            </h1>
+            <p class="mt-2 text-5xl font-semibold md:text-6xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.8);">
+                Hanya Di <span class="block mt-4 font-extrabold text-orange-400 text-7xl md:text-8xl">KRUSIT</span>
+            </p>
         </div>
     </div>
 
-    <!-- Quality Description Section -->
-    <section class="py-12 bg-orange-400">
-        <div class="container px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 gap-8 text-white md:grid-cols-2 lg:grid-cols-2">
-                <!-- Halal Section -->
-                <div class="flex items-center transition transform hover:scale-105">
+    <section class="py-16 text-white bg-orange-400">
+        <div class="container px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
 
-                    <div>
-                        <h2 class="text-3xl font-bold">HALAL</h2>
-
-                    </div>
+                <div class="p-4 transition duration-300 transform hover:scale-110">
+                    <h3 class="text-2xl font-bold tracking-wider md:text-3xl">HALAL</h3>
                 </div>
-                <!-- Crispy Section -->
-                <div class="flex items-center transition transform hover:scale-105">
 
-                    <div>
-                        <h2 class="text-3xl font-bold">CRISPY</h2>
-
-                    </div>
+                <div class="p-4 transition duration-300 transform hover:scale-110">
+                    <h3 class="text-2xl font-bold tracking-wider md:text-3xl">CRISPY</h3>
                 </div>
-                <!-- Segar Section -->
-                <div class="flex items-center transition transform hover:scale-105">
 
-                    <div>
-                        <h2 class="text-3xl font-bold">KRUNCHY</h2>
-
-                    </div>
+                <div class="p-4 transition duration-300 transform hover:scale-110">
+                    <h3 class="text-2xl font-bold tracking-wider md:text-3xl">KRUNCHY</h3>
                 </div>
-                <!-- Juicy Section -->
-                <div class="flex items-center transition transform hover:scale-105">
 
-                    <div>
-                        <h2 class="text-3xl font-bold">JUICY</h2>
-
-                    </div>
+                <div class="p-4 transition duration-300 transform hover:scale-110">
+                    <h3 class="text-2xl font-bold tracking-wider md:text-3xl">JUICY</h3>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Footer Section -->
-    <footer class="py-6 text-white bg-gray-900">
-        <div class="container mx-auto text-center">
-            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
+    <footer class="py-8 text-gray-300 bg-gray-900">
+        <div class="container px-4 mx-auto text-center">
+            <p class="text-base">&copy; 2024 KRUSIT. All rights reserved.</p>
             <div class="flex justify-center mt-4 space-x-6">
-                <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
-                <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>
-                <a href="#" class="text-white transition hover:text-orange-400">Twitter</a>
+                <a href="#" class="transition hover:text-orange-400">Facebook</a>
+                <a href="#" class="transition hover:text-orange-400">Instagram</a>
+                <a href="#" class="transition hover:text-orange-400">Twitter</a>
             </div>
         </div>
     </footer>
