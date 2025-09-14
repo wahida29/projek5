@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('phone', 255)->nullable(); // Phone Number
             $table->integer('Harga'); // Total Price
             $table->enum('Pembayaran', ['Cash', 'Transfer']);
-            $table->string('bukti_transfer')->nullable();  // Kolom bukti transfer, nullable karena hanya diperlukan jika pembayaran Transfer// Payment Method
             $table->timestamps(); // created_at and updated_at
         });
     }
