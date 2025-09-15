@@ -3,44 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krusit</title>
+    <title>Selamat Datang di Krusit</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="relative flex items-center justify-center min-h-screen bg-center bg-cover"
-      style="background-image: url('{{ asset('img/krusit2.png') }}');">
+<body class="relative flex items-center justify-center min-h-screen font-sans bg-center bg-cover bg-hero-krusit">
 
-    <!-- Overlay agar teks lebih kontras -->
-    <div class="absolute inset-0 bg-yellow-500/40 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 bg-black/60"></div>
 
-    <!-- Konten utama -->
-    <main class="relative z-10 max-w-3xl px-6 text-center text-gray-900">
-        <!-- Logo & Judul -->
+    <main class="relative z-10 max-w-3xl px-6 text-center text-white">
+
         <header class="flex flex-col items-center mb-8">
-            <div class="w-24 h-24 mb-4">
-                <x-application-logo class="w-24 h-24 text-gray-900 fill-current" />
-            </div>
-            <h1 class="text-5xl font-extrabold md:text-6xl drop-shadow-lg">
-                Krusit
+            <h1 class="text-6xl font-extrabold md:text-8xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
+                <span class="text-orange-400">KRUSIT</span>
             </h1>
-            <p class="mt-4 text-lg text-gray-800 md:text-xl">
-                Solusi kreatif untuk berbagi ide dan inovasi digital.
+            <p class="mt-4 text-lg text-gray-200 md:text-xl max-w-prose">
+                Krupuk Pangsit Goreng Renyah. Nikmati setiap gigitan renyahnya, dibuat dari bahan-bahan pilihan terbaik.
             </p>
         </header>
 
-        <!-- Tombol CTA -->
-        <div class="flex flex-col justify-center gap-4 mt-8 md:flex-row">
+        <div class="flex flex-col justify-center gap-4 mt-10 md:flex-row">
             <a href="{{ route('register') }}"
-               class="px-6 py-3 font-semibold text-yellow-300 transition duration-300 bg-gray-900 shadow rounded-2xl hover:bg-gray-800">
-               Daftar Sekarang
+               class="px-8 py-3 text-lg font-bold text-gray-900 transition duration-300 transform bg-orange-400 shadow-lg rounded-xl hover:bg-orange-300 hover:scale-105">
+                Daftar Sekarang
             </a>
             <a href="{{ route('login') }}"
-               class="px-6 py-3 font-semibold text-gray-900 transition duration-300 border border-gray-900 bg-yellow-300/70 rounded-2xl hover:bg-yellow-300">
-               Masuk
+               class="px-8 py-3 text-lg font-bold text-white transition duration-300 transform border-2 border-orange-400 shadow-lg bg-gray-900/50 rounded-xl backdrop-blur-sm hover:bg-orange-400 hover:text-gray-900 hover:scale-105">
+                Masuk
             </a>
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-12 text-sm text-gray-800/90">
+        <footer class="absolute text-sm text-gray-400 -translate-x-1/2 bottom-6 left-1/2">
             &copy; {{ date('Y') }} Krusit. All rights reserved.
         </footer>
     </main>

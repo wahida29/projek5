@@ -1,8 +1,12 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CrdYqtKN.css",
+    "file": "assets/app-Csu_5hwy.css",
     "src": "resources/css/app.css",
     "isEntry": true
+  },
+  "resources/img/krusit2.png": {
+    "file": "assets/krusit2-CyAMTY54.png",
+    "src": "resources/img/krusit2.png"
   },
   "resources/js/app.js": {
     "file": "assets/app-BjCBnTiP.js",
