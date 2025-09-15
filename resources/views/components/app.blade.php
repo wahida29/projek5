@@ -14,21 +14,22 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased text-gray-800 bg-gray-50">
-        {{-- Menggunakan bg-gray-50 untuk latar belakang yang tidak terlalu putih --}}
         <div class="flex flex-col min-h-screen">
+            {{-- Navbar --}}
             @include('layouts.navigation')
 
+            {{-- Header jika ada --}}
             @isset($header)
                 <header class="bg-white shadow-sm">
-                    {{-- Bayangan dibuat lebih lembut dengan shadow-sm --}}
                     <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
+            {{-- Konten utama --}}
             <main class="flex-1">
-                {{ $slot }}
+                @yield('content')
             </main>
 
             {{-- Footer --}}
