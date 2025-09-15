@@ -7,28 +7,32 @@
 
         <title>{{ config('app.name', 'Krusit') }}</title>
 
+        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+        <!-- Vite -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased text-gray-800 bg-gray-50">
-        {{-- Menggunakan bg-gray-50 untuk latar belakang yang tidak terlalu putih --}}
         <div class="flex flex-col min-h-screen">
+
+            {{-- Navbar --}}
             @include('layouts.navigation')
 
+            {{-- Header jika ada --}}
             @isset($header)
                 <header class="bg-white shadow-sm">
-                    {{-- Bayangan dibuat lebih lembut dengan shadow-sm --}}
                     <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
+            {{-- Konten utama --}}
             <main class="flex-1">
-                {{ $slot }}
+                @yield('content')
             </main>
 
             {{-- Footer --}}
@@ -43,7 +47,7 @@
                         <span class="text-gray-500">|</span>
                         <a href="{{ url('/login') }}" class="font-medium text-orange-400 hover:text-orange-500">Masuk</a>
                     </p>
-                    <p class="mt-4 text-xs text-gray-500">&copy; 2025 Krusit. All rights reserved.</p>
+                    <p class="mt-4 text-xs text-gray-500">&copy; {{ date('Y') }} Krusit. All rights reserved.</p>
                 </div>
             </footer>
         </div>
