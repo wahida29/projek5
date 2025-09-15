@@ -1,5 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
 
+@section('content')
     {{-- Hero Section --}}
     <div class="relative flex items-center justify-center h-screen bg-center bg-cover" style="background-image: url('/img/krusit2.png');">
         <div class="absolute inset-0 bg-black opacity-50"></div>
@@ -12,7 +13,6 @@
                 Hanya Di <span class="block mt-4 font-extrabold text-orange-400 text-7xl md:text-8xl">KRUSIT</span>
             </p>
 
-            {{-- CTA Button --}}
             <div class="mt-8">
                 <a href="{{ url('/menu') }}" class="px-6 py-3 text-lg font-semibold text-white transition bg-orange-500 rounded-full shadow-lg hover:bg-orange-600">
                     Pesan Sekarang
@@ -60,5 +60,4 @@
             </div>
         </div>
     </footer>
-
-</x-app-layout>
+@endsection
