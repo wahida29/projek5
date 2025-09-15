@@ -15,7 +15,7 @@
     </head>
     <body class="font-sans antialiased text-gray-800 bg-gray-50">
         {{-- Menggunakan bg-gray-50 untuk latar belakang yang tidak terlalu putih --}}
-        <div class="min-h-screen">
+        <div class="flex flex-col min-h-screen">
             @include('layouts.navigation')
 
             @isset($header)
@@ -27,9 +27,25 @@
                 </header>
             @endisset
 
-            <main>
+            <main class="flex-1">
                 {{ $slot }}
             </main>
+
+            {{-- Footer --}}
+            <footer class="py-6 mt-8 text-gray-300 bg-gray-900">
+                <div class="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
+                    <h3 class="text-xl font-semibold text-white">Krusit</h3>
+                    <p class="mt-2 text-sm">
+                        Solusi kreatif untuk berbagi ide dan inovasi digital.
+                    </p>
+                    <p class="mt-4 space-x-4">
+                        <a href="{{ url('/register') }}" class="font-medium text-orange-400 hover:text-orange-500">Daftar Sekarang</a>
+                        <span class="text-gray-500">|</span>
+                        <a href="{{ url('/login') }}" class="font-medium text-orange-400 hover:text-orange-500">Masuk</a>
+                    </p>
+                    <p class="mt-4 text-xs text-gray-500">&copy; 2025 Krusit. All rights reserved.</p>
+                </div>
+            </footer>
         </div>
     </body>
 </html>
