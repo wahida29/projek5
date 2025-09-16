@@ -26,7 +26,7 @@
         </div>
 
         <!-- Formulir Pemesanan -->
-        <form action="{{ route('pesan.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
+        <form action="{{ route('pesan.minuman.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
             @csrf
             <h2 class="mb-4 text-2xl font-bold text-center text-orange-500">Silahkan Pesan</h2>
 

@@ -47,8 +47,8 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
-    Route::post('/makanan', [PemesananController::class, 'store'])->name('pesan.store');
-    Route::post('/minuman', [PemesananController::class, 'store'])->name('pesan.store');
+    Route::post('/makanan', [PemesananController::class, 'store'])->name('pesan.makanan.store');
+    Route::post('/minuman', [PemesananController::class, 'store'])->name('pesan.minuman.store');
     Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::post('/pesanan/{id}/aprove', [PemesananController::class, 'approve'])->name('pesanan.aprove');
 
