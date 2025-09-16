@@ -11,11 +11,11 @@
         <table class="w-full bg-white rounded-lg shadow-lg">
             <thead>
                 <tr class="text-white bg-orange-400">
-                    <th class="px-4 py-2">Nama</th>
                     <th class="px-4 py-2">Menu</th>
                     <th class="px-4 py-2">Jumlah</th>
                     <th class="px-4 py-2">Nomor Telepon</th>
-                    <th class="px-4 py-2">Harga Satuan</th> <th class="px-4 py-2">Tanggal Pesan</th>
+                    <th class="px-4 py-2">Harga Satuan</th>
+                    <th class="px-4 py-2">Tanggal Pesan</th>
                     <th class="px-4 py-2">Metode Pembayaran</th>
                     <th class="px-4 py-2">Bukti Transfer</th>
                     <th class="px-4 py-2">Status</th>
@@ -35,12 +35,11 @@
                     @endphp
 
                     <tr class="text-center bg-gray-100 border-b">
-                        <td class="px-4 py-2 font-bold" colspan="11">{{ $customerName }}</td>
+                        <td class="px-4 py-2 font-bold" colspan="10">{{ $customerName }}</td>
                     </tr>
 
                     @foreach ($orders as $order)
                         <tr class="text-center border-b">
-                            <td></td>
                             <td class="px-4 py-2">{{ $order->menu }}</td>
                             <td class="px-4 py-2">{{ $order->quantity }}</td>
                             <td class="px-4 py-2">{{ $order->phone ?? '-' }}</td>
@@ -95,12 +94,12 @@
                     @endforeach
 
                     <tr class="text-center bg-orange-100 border-b">
-                        <td colspan="4" class="px-4 py-2 font-bold text-right">Total:</td>
+                        <td colspan="3" class="px-4 py-2 font-bold text-right">Total:</td>
                         <td colspan="7" class="px-4 py-2 font-bold text-orange-500">Rp{{ number_format($customerTotal, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" class="px-4 py-2 text-center">Belum ada pesanan.</td>
+                        <td colspan="10" class="px-4 py-2 text-center">Belum ada pesanan.</td>
                     </tr>
                 @endforelse
             </tbody>
