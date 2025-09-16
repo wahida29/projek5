@@ -9,7 +9,7 @@
                 </div>
             @endif
 
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="overflow-hidden border border-gray-200 shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-800">
@@ -17,9 +17,9 @@
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Nama</th>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Menu</th>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Jumlah</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Nomor Telepon</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Total Harga</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Tanggal Pesan</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Telepon</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Harga Item</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Tanggal</th>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Pembayaran</th>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Status</th>
                                 @if (Auth::user()->isAdmin())
@@ -29,23 +29,23 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($pesanans->groupBy('name') as $customerName => $orders)
-                                <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 10 : 8 }}">
+                                <tr class="bg-gray-100">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 10 : 8 }}">
                                         {{ $customerName }}
                                     </td>
                                 </tr>
 
                                 @foreach ($orders as $order)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap"></td> <td class="px-6 py-4 whitespace-nowrap">{{ $order->menu }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ $order->quantity }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ $order->phone ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Rp{{ number_format($order->Harga, 0, ',', '.') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ $order->created_at->format('d M Y') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap"></td> <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->menu }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->quantity }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->phone ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">Rp{{ number_format($order->Harga, 0, ',', '.') }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->created_at->format('d M Y') }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                             {{ $order->Pembayaran ?? 'N/A' }}
                                             @if ($order->bukti_transfer)
-                                                <button onclick="showModal('{{ asset('storage/' . $order->bukti_transfer) }}')" class="ml-2 text-xs text-blue-500 hover:underline">(Lihat Bukti)</button>
+                                                <button onclick="showModal('{{ asset('storage/'' . $order->bukti_transfer) }}')" class="ml-2 text-xs text-blue-500 hover:underline">(Lihat Bukti)</button>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -77,6 +77,13 @@
                                         @endif
                                     </tr>
                                 @endforeach
+
+                                <tr class="bg-gray-200">
+                                    <td colspan="{{ Auth::user()->isAdmin() ? 4 : 4 }}" class="px-6 py-3 text-sm font-bold text-right text-gray-800">TOTAL UNTUK {{ strtoupper($customerName) }}</td>
+                                    <td colspan="{{ Auth::user()->isAdmin() ? 6 : 4 }}" class="px-6 py-3 text-sm font-bold text-gray-800">
+                                        Rp{{ number_format($orders->sum('Harga'), 0, ',', '.') }}
+                                    </td>
+                                </tr>
                             @empty
                                 <tr>
                                     <td class="px-6 py-4 text-center text-gray-500 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 10 : 8 }}">
@@ -93,19 +100,17 @@
 
     <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-75">
         <div class="relative p-4 bg-white rounded-lg">
-            <button onclick="closeModal()" class="absolute flex items-center justify-center w-8 h-8 text-white bg-red-600 rounded-full -top-3 -right-3 hover:bg-red-700">
-                &times;
-            </button>
+            <button onclick="closeModal()" class="absolute flex items-center justify-center w-8 h-8 text-white bg-red-600 rounded-full -top-3 -right-3 hover:bg-red-700">&times;</button>
             <img id="modalImage" src="" alt="Bukti Transfer" class="max-w-screen-md max-h-screen">
         </div>
     </div>
 
     <script>
+        // Script modal (tetap sama)
         function showModal(imageUrl) {
             document.getElementById('modalImage').src = imageUrl;
             document.getElementById('imageModal').classList.remove('hidden');
         }
-
         function closeModal() {
             document.getElementById('imageModal').classList.add('hidden');
         }
