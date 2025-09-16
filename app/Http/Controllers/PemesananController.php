@@ -109,7 +109,7 @@ class PemesananController extends Controller
 
         return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil diperbarui.');
     }
-    public function aprove($id)
+    public function approve($id)
 {
     $pesanan = Pemesanan::findOrFail($id);
     $pesanan->status = 'approved'; // Pastikan ada kolom 'status' di tabel.
