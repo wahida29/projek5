@@ -4,8 +4,8 @@
             <h2 class="mb-8 text-3xl font-bold text-center text-gray-800">Daftar Pesanan</h2>
 
             @if (session('success'))
-                <div class="mb-4 text-white bg-green-500 rounded-lg">
-                    <p class="p-4">{{ session('success') }}</p>
+                <div class="p-4 mb-4 text-white bg-green-500 rounded-lg">
+                    {{ session('success') }}
                 </div>
             @endif
 
@@ -27,8 +27,16 @@
                                 @endif
                             </tr>
                         </thead>
+
                         <tbody class="bg-white divide-y divide-gray-200">
+                            @php $grandTotal = 0; @endphp
+
                             @forelse ($pesanans->groupBy('name') as $customerName => $orders)
+                                @php
+                                    $customerTotal = $orders->sum('Harga');
+                                    $grandTotal += $customerTotal;
+                                @endphp
+
                                 <tr class="bg-gray-100">
                                     <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 10 : 8 }}">
                                         {{ $customerName }}
@@ -37,7 +45,7 @@
 
                                 @foreach ($orders as $order)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap"></td> <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->menu }}</td>
+                                        <td class="px-6 py-4"></td> <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->menu }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->quantity }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{{ $order->phone ?? '-' }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">Rp{{ number_format($order->Harga, 0, ',', '.') }}</td>
@@ -45,7 +53,7 @@
                                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                             {{ $order->Pembayaran ?? 'N/A' }}
                                             @if ($order->bukti_transfer)
-                                                <button onclick="showModal('{{ asset('storage/'' . $order->bukti_transfer) }}')" class="ml-2 text-xs text-blue-500 hover:underline">(Lihat Bukti)</button>
+                                                <button onclick="showModal('{{ asset("storage/{$order->bukti_transfer}") }}')" class="ml-2 text-xs text-blue-500 hover:underline">(Lihat Bukti)</button>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -79,9 +87,9 @@
                                 @endforeach
 
                                 <tr class="bg-gray-200">
-                                    <td colspan="{{ Auth::user()->isAdmin() ? 4 : 4 }}" class="px-6 py-3 text-sm font-bold text-right text-gray-800">TOTAL UNTUK {{ strtoupper($customerName) }}</td>
+                                    <td colspan="{{ Auth::user()->isAdmin() ? 4 : 4 }}" class="px-6 py-3 text-sm font-bold text-right text-gray-800">TOTAL</td>
                                     <td colspan="{{ Auth::user()->isAdmin() ? 6 : 4 }}" class="px-6 py-3 text-sm font-bold text-gray-800">
-                                        Rp{{ number_format($orders->sum('Harga'), 0, ',', '.') }}
+                                        Rp{{ number_format($customerTotal, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @empty
@@ -106,7 +114,6 @@
     </div>
 
     <script>
-        // Script modal (tetap sama)
         function showModal(imageUrl) {
             document.getElementById('modalImage').src = imageUrl;
             document.getElementById('imageModal').classList.remove('hidden');
