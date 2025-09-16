@@ -4,6 +4,7 @@
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             @foreach ($menus as $menu)
                 <div class="relative flex flex-col items-center group">
+                    <!-- Gambar -->
                     <div class="overflow-hidden bg-white rounded-lg shadow-lg">
                         @if ($menu->image)
                             <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }} "
@@ -14,6 +15,7 @@
                         @endif
                     </div>
 
+                    <!-- Informasi Produk -->
                     <div class="w-full px-4 py-2 text-center transition-all duration-300 bg-gray-200 group-hover:bg-gray-300">
                         <h3 class="text-lg font-bold">{{ $menu->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $menu->description ?: 'Deskripsi tidak tersedia.' }}</p>
@@ -23,6 +25,7 @@
             @endforeach
         </div>
 
+        <!-- Formulir Pemesanan -->
         <form action="{{ route('pesanan.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
             @csrf
             <h2 class="mb-4 text-2xl font-bold text-center text-orange-500">Silahkan Pesan</h2>
@@ -69,10 +72,12 @@
                 </select>
             </div>
 
+            <!-- Tampilkan Nomor Rekening Perusahaan jika Transfer dipilih -->
             <div id="nomor-rekening" class="hidden mt-4">
                 <p class="text-sm text-gray-600">Nomor Rekening Perusahaan: 123-456-789 (Bank ABC)</p>
             </div>
 
+            <!-- Input Bukti Pembayaran jika Transfer dipilih -->
             <div id="bukti-transfer" class="hidden mt-4">
                 <label for="bukti_pembayaran" class="block mb-2 font-bold text-gray-700">Bukti Pembayaran</label>
                 <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" class="w-full p-2 border rounded-lg" accept="image/*">
@@ -89,6 +94,7 @@
             </button>
         </form>
 
+        <!-- Confirmation Modal -->
         <div id="confirmationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
             <div class="p-6 text-center bg-white rounded-lg shadow-lg">
                 <h3 class="mb-4 text-lg font-bold text-gray-800">Konfirmasi Pesanan</h3>
@@ -196,4 +202,15 @@
             });
         });
     </script>
+
+    <footer class="py-6 text-white bg-gray-900">
+        <div class="container mx-auto text-center">
+            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
+            <div class="flex justify-center mt-4 space-x-6">
+                <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
+                <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>
+                <a href="#" class="text-white transition hover:text-orange-400">Twitter</a>
+            </div>
+        </div>
+    </footer>
 </x-app-layout>

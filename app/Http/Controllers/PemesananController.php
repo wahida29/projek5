@@ -48,7 +48,7 @@ class PemesananController extends Controller
             $pesanan->save();
         }
 
-        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil disimpan.');
+        return redirect()->route('pesan.store')->with('success', 'Pesanan berhasil disimpan.');
     }
 
     /**
