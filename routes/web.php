@@ -5,79 +5,55 @@ use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Rute Publik
-|--------------------------------------------------------------------------
-| Dapat diakses oleh siapa saja, bahkan yang belum login.
-*/
+// Welcome page
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Dashboard
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| Rute User Terautentikasi
-|--------------------------------------------------------------------------
-| Membutuhkan login. Dapat diakses oleh 'user' maupun 'admin'.
-*/
+// Additional views
+Route::get('/kontak', function () {
+    return view('kontak');
+})->middleware(['auth', 'verified'])->name('kontak');
+
+Route::get('/menu', function () {
+    return view('menu');
+})->middleware(['auth', 'verified'])->name('menu');
+
+// Barang routes
+Route::resource('barang', BarangController::class)->middleware('auth');
+Route::get('/makanan', [BarangController::class, 'showMakanan'])->name('makanan');
+Route::get('/minuman', [BarangController::class, 'showMinuman'])->name('minuman');
+
+// Pemesanan routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
+    Route::post('/makanan/store', [PemesananController::class, 'store'])->name('pesan.makanan2.store');
+    Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
+    Route::post('/pesanan/{id}/approve', [PemesananController::class, 'approve'])->name('pesanan.approve');
+});
 
-    // Halaman Dasbor Utama (Pengarah Otomatis)
-    Route::get('/dashboard', function () {
-        if (auth()->user()->isAdmin()) {
-            return redirect()->route('admin.dashboard'); // Arahkan ke dasbor admin
-        }
-        return view('dashboard'); // Tampilkan dasbor user biasa
-    })->name('dashboard');
+// Order routes
 
-    // Halaman Menu & Kontak
-    Route::get('/menu', function () { return view('menu'); })->name('menu');
-    Route::get('/kontak', function () { return view('kontak'); })->name('kontak');
-
-    // Halaman untuk melihat makanan & minuman
-    Route::get('/makanan', [BarangController::class, 'showMakanan'])->name('makanan');
-    Route::get('/minuman', [BarangController::class, 'showMinuman'])->name('minuman');
-
-    // Proses membuat pesanan baru
-    Route::post('/pesan/store', [PemesananController::class, 'store'])->name('pesanan.store');
-
-    // Halaman untuk user melihat riwayat pesanannya sendiri
-    Route::get('/pesanan-saya', [PemesananController::class, 'index'])->name('pesanan.index');
-
-    // Rute untuk manajemen profil pengguna
+// Profile management
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
-/*
-|--------------------------------------------------------------------------
-| Rute Khusus Admin 🛡️
-|--------------------------------------------------------------------------
-| HANYA dapat diakses oleh pengguna dengan peran 'admin'.
-| Dilindungi oleh middleware 'auth' dan 'admin'.
-*/
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
-    // Dasbor Khusus Admin
-    Route::get('/dashboard', function() {
-        // Anda bisa menambahkan logika untuk mengambil data khusus admin di sini
-        return view('admin.dashboard');
-    })->name('dashboard');
-
-    // CRUD (Create, Read, Update, Delete) untuk Barang/Menu
-    Route::resource('barang', BarangController::class);
-
-    // Manajemen Pesanan oleh Admin (Melihat semua pesanan, approve, delete)
-    Route::get('/pesanan', [PemesananController::class, 'showAllPesanan'])->name('pesanan.list');
-    Route::post('/pesanan/{id}/approve', [PemesananController::class, 'approve'])->name('pesanan.approve');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
+    Route::post('/makanan', [PemesananController::class, 'store'])->name('pesan.makanan.store');
+    Route::post('/minuman', [PemesananController::class, 'store'])->name('pesan.minuman.store');
     Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
+    Route::post('/pesanan/{id}/aprove', [PemesananController::class, 'approve'])->name('pesanan.aprove');
+
 
 });
 
-
-// Rute Autentikasi (Login, Register, dll.)
+// Authentication routes
 require __DIR__.'/auth.php';
