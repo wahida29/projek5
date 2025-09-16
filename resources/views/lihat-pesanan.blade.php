@@ -21,7 +21,7 @@
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Tanggal</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Pembayaran</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">Status</th>
-                                @if (Auth::user()->isAdmin())
+                                @if (Auth::check() && Auth::user()->role === 'admin')
                                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-center text-white uppercase" colspan="2">Aksi</th>
                                 @endif
                             </tr>
@@ -29,7 +29,7 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($pesanans->groupBy('name') as $customerName => $orders)
                                 <tr class="bg-gray-100">
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 9 : 7 }}">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ (Auth::check() && Auth::user()->role === 'admin') ? 9 : 7 }}">
                                         {{ $customerName }}
                                     </td>
                                 </tr>
@@ -53,7 +53,7 @@
                                                 <span class="inline-flex px-2 text-xs font-semibold leading-5 text-yellow-800 bg-yellow-100 rounded-full">Menunggu</span>
                                             @endif
                                         </td>
-                                        @if (Auth::user()->isAdmin())
+                                        @if (Auth::check() && Auth::user()->role === 'admin')
                                             <td class="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
                                                 @if ($order->status !== 'approved')
                                                     <form action="{{ route('pesanan.approve', $order->id) }}" method="POST"> @csrf <button type="submit" class="text-indigo-600 hover:text-indigo-900">Approve</button> </form>
@@ -104,7 +104,7 @@
                                             @endif
                                         </p>
                                     </div>
-                                    @if (Auth::user()->isAdmin())
+                                    @if (Auth::check() && Auth::user()->role === 'admin')
                                         <div class="flex justify-end pt-3 mt-3 space-x-4 border-t">
                                             @if ($order->status !== 'approved')
                                                 <form action="{{ route('pesanan.approve', $order->id) }}" method="POST"> @csrf <button type="submit" class="px-3 py-1 text-xs text-white bg-green-500 rounded-md">Approve</button> </form>
