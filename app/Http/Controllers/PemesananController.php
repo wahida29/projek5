@@ -3,72 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pemesanan;
-use App\Models\Barang; // Import model Barang
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class PemesananController extends Controller
 {
     /**
-     * Menyimpan data pemesanan baru ke dalam database.
+     * Menyimpan data pemesanan ke dalam database.
      */
     public function store(Request $request)
     {
-        // Langkah 1: Validasi Input dari Form
-        // Pastikan 'name' di form Anda sesuai dengan aturan validasi ini.
+        // Validasi input
         $validated = $request->validate([
-            'nama_pemesan' => 'required|string|max:255',
-            'nomor_telepon' => 'required|string|max:20',
-            'pembayaran' => 'required|string|in:Cash,Transfer',
-            'items' => 'required|array|min:1',
-            'items.*.barang_id' => 'required|exists:barangs,id',
-            'items.*.jumlah' => 'required|integer|min:1',
-            'bukti_pembayaran' => $request->pembayaran === 'Transfer' ? 'required|file|mimes:jpeg,png,jpg,pdf|max:2048' : 'nullable',
+            'name' => 'required|string|max:255',
+            'menus' => 'required|array',
+            'menus.*.menu' => 'required|string|max:255',
+            'menus.*.quantity' => 'required|integer|min:1',
+            'phone' => 'nullable|string|max:255',
+            'Harga' => 'required|integer|min:0',
+            'Pembayaran' => 'required|in:Cash,Transfer',
+            'bukti_pembayaran' => $request->Pembayaran === 'Transfer' ? 'required|file|mimes:jpeg,png,jpg,pdf|max:2048' : 'nullable',
+
         ]);
 
-        // Memulai database transaction untuk keamanan data
-        DB::beginTransaction();
-        try {
-            // Langkah 2: Hitung Total Harga di Back-End (lebih aman)
-            $totalHarga = 0;
-            foreach ($validated['items'] as $item) {
-                $barang = Barang::find($item['barang_id']);
-                $totalHarga += $barang->harga * $item['jumlah'];
-            }
-
-            // Langkah 3: Simpan SATU Data Pesanan Utama
-            $pemesanan = Pemesanan::create([
-                'user_id' => Auth::id(),
-                'nama_pemesan' => $validated['nama_pemesan'],
-                'nomor_telepon' => $validated['nomor_telepon'],
-                'metode_pembayaran' => $validated['pembayaran'],
-                'total_harga' => $totalHarga,
-                'status' => 'pending',
+        // Menyimpan setiap item menu sebagai pesanan
+        foreach ($request->menus as $menu) {
+            // Membuat pesanan baru
+            $pesanan = Pemesanan::create([
+                'name' => $request->name,
+                'menu' => $menu['menu'],
+                'quantity' => $menu['quantity'],
+                'phone' => $request->phone,
+                'Harga' => $request->Harga,
+                'Pembayaran' => $request->Pembayaran,
+                'user_id' => auth()->id(),
             ]);
 
-            // Simpan bukti transfer jika ada
-            if ($request->pembayaran == 'Transfer' && $request->hasFile('bukti_pembayaran')) {
+            // Jika pembayaran dengan Transfer, simpan bukti transfer
+            if ($request->Pembayaran == 'Transfer' && $request->hasFile('bukti_pembayaran')) {
+                // Menyimpan bukti transfer ke storage
                 $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
-                $pemesanan->bukti_pembayaran = $path;
-                $pemesanan->save();
+                $pesanan->bukti_transfer = $path;
             }
 
-            // Langkah 4: Simpan Detail Item Pesanan ke tabel pivot
-            // Ini mengasumsikan Anda punya relasi Many-to-Many antara Pemesanan dan Barang
-            foreach ($validated['items'] as $item) {
-                $pemesanan->barangs()->attach($item['barang_id'], ['jumlah' => $item['jumlah']]);
-            }
-
-            DB::commit(); // Konfirmasi semua proses simpan jika berhasil
-
-            // Langkah 5: Redirect ke halaman 'Lihat Pesanan' dengan pesan sukses
-            return redirect()->route('pesanan.index')->with('success', 'Pesanan Anda berhasil dibuat!');
-
-        } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan semua proses simpan jika ada error
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            $pesanan->save();
         }
+
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil disimpan.');
     }
 
     /**
@@ -76,14 +56,15 @@ class PemesananController extends Controller
      */
     public function index()
     {
-        // Menggunakan eager loading ('barangs') untuk efisiensi query
-        if (auth()->user()->isAdmin()) {
-            $pesanans = Pemesanan::with('barangs')->latest()->get();
+        if (auth()->user()->role === 'admin') {
+            // Jika admin, ambil semua pesanan
+            $pesanans = Pemesanan::all();
         } else {
-            $pesanans = Pemesanan::where('user_id', auth()->id())->with('barangs')->latest()->get();
+            // Jika bukan admin, ambil pesanan berdasarkan user yang sedang login
+            $pesanans = Pemesanan::where('user_id', auth()->id())->get();
         }
 
-        return view('pesanan.index', compact('pesanans')); // Pastikan nama view benar
+        return view('lihat-pesanan', compact('pesanans')); // Mengirim data pesanan ke view
     }
 
     /**
@@ -91,21 +72,50 @@ class PemesananController extends Controller
      */
     public function destroy($id)
     {
-        $pesanan = Pemesanan::findOrFail($id);
-        $pesanan->delete();
+        $pesanan = Pemesanan::findOrFail($id); // Cari pesanan berdasarkan ID
+        $pesanan->delete(); // Hapus pesanan
 
-        return redirect()->route('admin.pesanan.list')->with('success', 'Pesanan berhasil dihapus!');
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dihapus!');
     }
 
     /**
-     * Menyetujui pesanan oleh admin.
+     * Memperbarui data pesanan.
      */
-    public function approve($id)
+    public function update(Request $request, $id)
     {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'Pembayaran' => 'required|in:Cash,Transfer',
+            'bukti_pembayaran' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Menemukan pesanan yang akan diperbarui
         $pesanan = Pemesanan::findOrFail($id);
-        $pesanan->status = 'approved';
+        $pesanan->name = $request->name;
+        $pesanan->phone = $request->phone;
+        $pesanan->pembayaran = $request->Pembayaran;
+
+        // Jika pembayaran dengan Transfer dan ada bukti pembayaran
+        if ($request->Pembayaran == 'Transfer' && $request->hasFile('bukti_pembayaran')) {
+            // Menyimpan bukti transfer
+            $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+            $pesanan->bukti_transfer = $path;
+        }
+
+        // Simpan data lainnya sesuai dengan form
         $pesanan->save();
 
-        return redirect()->back()->with('success', 'Pesanan telah disetujui.');
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil diperbarui.');
     }
+    public function aprove($id)
+{
+    $pesanan = Pemesanan::findOrFail($id);
+    $pesanan->status = 'approved'; // Pastikan ada kolom 'status' di tabel.
+    $pesanan->save();
+
+    return redirect()->back()->with('success', 'Pesanan telah disetujui.');
+}
+
 }
