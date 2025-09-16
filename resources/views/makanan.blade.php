@@ -4,7 +4,6 @@
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             @foreach ($menus as $menu)
                 <div class="relative flex flex-col items-center group">
-                    <!-- Gambar -->
                     <div class="overflow-hidden bg-white rounded-lg shadow-lg">
                         @if ($menu->image)
                             <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }} "
@@ -15,7 +14,6 @@
                         @endif
                     </div>
 
-                    <!-- Informasi Produk -->
                     <div class="w-full px-4 py-2 text-center transition-all duration-300 bg-gray-200 group-hover:bg-gray-300">
                         <h3 class="text-lg font-bold">{{ $menu->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $menu->description ?: 'Deskripsi tidak tersedia.' }}</p>
@@ -25,28 +23,27 @@
             @endforeach
         </div>
 
-        <!-- Formulir Pemesanan -->
-        <form action="{{ route('pesan.makanan.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
+        <form action="{{ route('pesanan.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
             @csrf
             <h2 class="mb-4 text-2xl font-bold text-center text-orange-500">Silahkan Pesan</h2>
 
             <div class="mb-4">
-                <label for="name" class="block mb-2 font-bold text-gray-700">Nama Anda</label>
-                <input type="text" id="name" name="name" class="w-full p-2 border rounded-lg" required>
+                <label for="nama_pemesan" class="block mb-2 font-bold text-gray-700">Nama Anda</label>
+                <input type="text" id="nama_pemesan" name="nama_pemesan" class="w-full p-2 border rounded-lg" value="{{ auth()->user()->name }}" required>
             </div>
 
             <div id="menu-container" class="space-y-4">
                 <div class="flex items-center space-x-4 menu-item">
-                    <select name="menus[0][menu]" class="w-full px-4 py-2 bg-white border rounded-lg" required>
+                    <select name="items[0][barang_id]" class="w-full px-4 py-2 bg-white border rounded-lg menu-select" required>
                         <option value="" disabled selected>Pilih Menu</option>
                         @foreach ($menus as $menu)
-                            <option value="{{ $menu->name }}" data-price="{{ $menu->price }}">
+                            <option value="{{ $menu->id }}" data-price="{{ $menu->price }}">
                                 {{ $menu->name }} - Rp{{ number_format($menu->price, 0, ',', '.') }}
                             </option>
                         @endforeach
                     </select>
 
-                    <input type="number" name="menus[0][quantity]" class="w-20 p-2 border rounded-lg" placeholder="Jumlah" min="1" required>
+                    <input type="number" name="items[0][jumlah]" class="w-20 p-2 border rounded-lg jumlah-input" placeholder="Jumlah" min="1" required>
 
                     <button type="button" class="px-3 py-2 text-white bg-red-500 rounded-lg remove-menu-item">
                         Hapus
@@ -59,33 +56,30 @@
             </button>
 
             <div class="mt-4">
-                <label for="phone" class="block mb-2 font-bold text-gray-700">Nomor Telepon</label>
-                <input type="text" id="phone" name="phone" class="w-full p-2 border rounded-lg" required>
+                <label for="nomor_telepon" class="block mb-2 font-bold text-gray-700">Nomor Telepon</label>
+                <input type="text" id="nomor_telepon" name="nomor_telepon" class="w-full p-2 border rounded-lg" required>
             </div>
 
             <div class="mt-4">
                 <label for="pembayaran" class="block mb-2 font-bold text-gray-700">Pembayaran</label>
-                <select id="Pembayaran" name="Pembayaran" class="w-full px-4 py-2 bg-white border rounded-lg" required>
+                <select id="pembayaran" name="pembayaran" class="w-full px-4 py-2 bg-white border rounded-lg" required>
                     <option value="" disabled selected>Pilih Metode Pembayaran</option>
                     <option value="Cash">Cash</option>
                     <option value="Transfer">Transfer</option>
                 </select>
             </div>
 
-            <!-- Tampilkan Nomor Rekening Perusahaan jika Transfer dipilih -->
             <div id="nomor-rekening" class="hidden mt-4">
                 <p class="text-sm text-gray-600">Nomor Rekening Perusahaan: 123-456-789 (Bank ABC)</p>
             </div>
 
-            <!-- Input Bukti Pembayaran jika Transfer dipilih -->
             <div id="bukti-transfer" class="hidden mt-4">
                 <label for="bukti_pembayaran" class="block mb-2 font-bold text-gray-700">Bukti Pembayaran</label>
                 <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" class="w-full p-2 border rounded-lg" accept="image/*">
             </div>
 
             <div class="mt-4">
-                <label for="Harga" class="block mb-2 font-bold text-gray-700">Total Harga</label>
-                <input type="hidden" id="Harga" name="Harga">
+                <label for="total_harga_display" class="block mb-2 font-bold text-gray-700">Total Harga</label>
                 <input type="text" id="total_harga_display" class="w-full p-2 border rounded-lg" readonly>
             </div>
 
@@ -94,7 +88,6 @@
             </button>
         </form>
 
-        <!-- Confirmation Modal -->
         <div id="confirmationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
             <div class="p-6 text-center bg-white rounded-lg shadow-lg">
                 <h3 class="mb-4 text-lg font-bold text-gray-800">Konfirmasi Pesanan</h3>
@@ -115,14 +108,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             const menuContainer = document.getElementById('menu-container');
             const addMenuItemButton = document.getElementById('add-menu-item');
-            const totalHargaInput = document.getElementById('Harga');
             const totalHargaDisplay = document.getElementById('total_harga_display');
             const orderForm = document.getElementById('orderForm');
             const confirmationModal = document.getElementById('confirmationModal');
             const confirmOrderButton = document.getElementById('confirmOrderButton');
             const cancelOrderButton = document.getElementById('cancelOrderButton');
             const submitOrderButton = document.getElementById('submitOrderButton');
-            const pembayaranSelect = document.getElementById('Pembayaran');
+            const pembayaranSelect = document.getElementById('pembayaran');
             const buktiTransferDiv = document.getElementById('bukti-transfer');
             const nomorRekeningDiv = document.getElementById('nomor-rekening');
 
@@ -130,15 +122,14 @@
             function calculateTotalPrice() {
                 let totalPrice = 0;
                 menuContainer.querySelectorAll('.menu-item').forEach(item => {
-                    const select = item.querySelector('select');
-                    const quantityInput = item.querySelector('input[type="number"]');
+                    const select = item.querySelector('.menu-select');
+                    const quantityInput = item.querySelector('.jumlah-input');
                     const price = parseFloat(select.options[select.selectedIndex]?.dataset.price || 0);
                     const quantity = parseInt(quantityInput.value || 0);
                     totalPrice += price * quantity;
                 });
 
-                totalHargaInput.value = totalPrice;
-                totalHargaDisplay.value = totalPrice.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+                totalHargaDisplay.value = totalPrice.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
             }
 
             // Add new menu item
@@ -147,42 +138,38 @@
                 const newMenuItem = document.createElement('div');
                 newMenuItem.classList.add('menu-item', 'flex', 'space-x-4', 'items-center');
                 newMenuItem.innerHTML = `
-                    <select name="menus[${menuItemsCount}][menu]" class="w-full px-4 py-2 bg-white border rounded-lg" required>
+                    <select name="items[${menuItemsCount}][barang_id]" class="w-full px-4 py-2 bg-white border rounded-lg menu-select" required>
                         <option value="" disabled selected>Pilih Menu</option>
                         @foreach ($menus as $menu)
-                            <option value="{{ $menu->name }}" data-price="{{ $menu->price }}">
+                            <option value="{{ $menu->id }}" data-price="{{ $menu->price }}">
                                 {{ $menu->name }} - Rp{{ number_format($menu->price, 0, ',', '.') }}
                             </option>
                         @endforeach
                     </select>
-                    <input type="number" name="menus[${menuItemsCount}][quantity]" class="w-20 p-2 border rounded-lg" placeholder="Jumlah" min="1" required>
+                    <input type="number" name="items[${menuItemsCount}][jumlah]" class="w-20 p-2 border rounded-lg jumlah-input" placeholder="Jumlah" min="1" required>
                     <button type="button" class="px-3 py-2 text-white bg-red-500 rounded-lg remove-menu-item">Hapus</button>
                 `;
                 menuContainer.appendChild(newMenuItem);
-
-                newMenuItem.querySelector('select').addEventListener('change', calculateTotalPrice);
-                newMenuItem.querySelector('input[type="number"]').addEventListener('input', calculateTotalPrice);
-                newMenuItem.querySelector('.remove-menu-item').addEventListener('click', () => {
-                    newMenuItem.remove();
-                    calculateTotalPrice();
-                });
-
-                calculateTotalPrice(); // Update total price immediately after adding menu item
             });
 
-            // Calculate total price on change
+            // Event delegation for remove, change, and input
+            menuContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-menu-item')) {
+                    if (menuContainer.querySelectorAll('.menu-item').length > 1) {
+                        e.target.closest('.menu-item').remove();
+                        calculateTotalPrice();
+                    }
+                }
+            });
+
             menuContainer.addEventListener('change', calculateTotalPrice);
             menuContainer.addEventListener('input', calculateTotalPrice);
 
             // Show/hide bukti pembayaran and nomor rekening based on payment method
             pembayaranSelect.addEventListener('change', () => {
-                if (pembayaranSelect.value === 'Transfer') {
-                    buktiTransferDiv.classList.remove('hidden');
-                    nomorRekeningDiv.classList.remove('hidden');
-                } else {
-                    buktiTransferDiv.classList.add('hidden');
-                    nomorRekeningDiv.classList.add('hidden');
-                }
+                const isTransfer = pembayaranSelect.value === 'Transfer';
+                buktiTransferDiv.classList.toggle('hidden', !isTransfer);
+                nomorRekeningDiv.classList.toggle('hidden', !isTransfer);
             });
 
             // Show confirmation modal
@@ -200,17 +187,9 @@
                 confirmationModal.classList.add('hidden');
                 orderForm.submit();
             });
+
+            // Initial calculation
+            calculateTotalPrice();
         });
     </script>
-
-    <footer class="py-6 text-white bg-gray-900">
-        <div class="container mx-auto text-center">
-            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
-            <div class="flex justify-center mt-4 space-x-6">
-                <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
-                <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>
-                <a href="#" class="text-white transition hover:text-orange-400">Twitter</a>
-            </div>
-        </div>
-    </footer>
 </x-app-layout>
