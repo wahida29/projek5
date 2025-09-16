@@ -15,13 +15,10 @@
                     <th class="px-4 py-2">Menu</th>
                     <th class="px-4 py-2">Jumlah</th>
                     <th class="px-4 py-2">Nomor Telepon</th>
-                    <th class="px-4 py-2">Total Harga</th>
-                    <th class="px-4 py-2">Customer Total</th>
-                    <th class="px-4 py-2">Tanggal Pesan</th>
+                    <th class="px-4 py-2">Harga Satuan</th> <th class="px-4 py-2">Tanggal Pesan</th>
                     <th class="px-4 py-2">Metode Pembayaran</th>
                     <th class="px-4 py-2">Bukti Transfer</th>
                     <th class="px-4 py-2">Status</th>
-
                     @if (Auth::check() && Auth::user()->role === 'admin')
                         <th class="px-4 py-2">Approve</th>
                         <th class="px-4 py-2">Aksi</th>
@@ -29,9 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $grandTotal = 0;
-                @endphp
+                @php $grandTotal = 0; @endphp
 
                 @forelse ($pesanans->groupBy('name') as $customerName => $orders)
                     @php
@@ -40,7 +35,7 @@
                     @endphp
 
                     <tr class="text-center bg-gray-100 border-b">
-                        <td class="px-4 py-2 font-bold" colspan="12">{{ $customerName }}</td>
+                        <td class="px-4 py-2 font-bold" colspan="11">{{ $customerName }}</td>
                     </tr>
 
                     @foreach ($orders as $order)
@@ -49,8 +44,7 @@
                             <td class="px-4 py-2">{{ $order->menu }}</td>
                             <td class="px-4 py-2">{{ $order->quantity }}</td>
                             <td class="px-4 py-2">{{ $order->phone ?? '-' }}</td>
-                            <td class="px-4 py-2">Rp{{ number_format($order->Harga, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2"></td>
+                            <td class="px-4 py-2">Rp{{ number_format($order->Harga / $order->quantity, 0, ',', '.') }}</td>
                             <td class="px-4 py-2">{{ $order->created_at->format('d-m-Y') }}</td>
                             <td class="px-4 py-2">{{ $order->Pembayaran ?? 'Belum Ditentukan' }}</td>
                             <td class="px-4 py-2">
@@ -80,7 +74,7 @@
                                         <form action="{{ route('pesanan.approve', $order->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui pesanan ini?');">
                                             @csrf
                                             <button type="submit" class="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700">
-                                                Approval
+                                                Approve
                                             </button>
                                         </form>
                                     @else
@@ -102,11 +96,11 @@
 
                     <tr class="text-center bg-orange-100 border-b">
                         <td colspan="4" class="px-4 py-2 font-bold text-right">Total:</td>
-                        <td colspan="8" class="px-4 py-2 font-bold text-orange-500">Rp{{ number_format($customerTotal, 0, ',', '.') }}</td>
+                        <td colspan="7" class="px-4 py-2 font-bold text-orange-500">Rp{{ number_format($customerTotal, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="12" class="px-4 py-2 text-center">Belum ada pesanan.</td>
+                        <td colspan="11" class="px-4 py-2 text-center">Belum ada pesanan.</td>
                     </tr>
                 @endforelse
             </tbody>
