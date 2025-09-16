@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Tambahkan ini
+        'role', // Ini sudah benar
     ];
 
     /**
@@ -45,5 +45,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * =================================================================
+     * TAMBAHKAN FUNGSI INI DI BAWAH
+     * =================================================================
+     * * Memeriksa apakah pengguna memiliki peran 'admin'.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }
