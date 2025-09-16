@@ -38,7 +38,7 @@
                                 @endphp
 
                                 <tr class="bg-gray-100">
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->isAdmin() ? 10 : 8 }}">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 whitespace-nowrap" colspan="{{ Auth::user()->admin() ? 10 : 8 }}">
                                         {{ $customerName }}
                                     </td>
                                 </tr>
