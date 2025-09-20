@@ -4,7 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Http\Controllers\BarangController;
 
+Route::get('/makanan', [BarangController::class, 'apiMakanan']);
+Route::get('/minuman', [BarangController::class, 'apiMinuman']);
 Route::post('/login', function (Request $request) {
     $request->validate([
         'email'    => 'required|email',

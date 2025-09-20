@@ -120,4 +120,22 @@ public function showMinuman()
     $menus = Menu::where('category', 'minuman')->get();
     return view('minuman', compact('menus'));
 }
+public function apiMakanan()
+{
+    $makanan = menu::where('category', 'makanan')->get();
+    return response()->json([
+        'status' => 'success',
+        'data' => $makanan
+    ]);
+}
+
+public function apiMinuman()
+{
+    $minuman = menu::where('category', 'minuman')->get();
+    return response()->json([
+        'status' => 'success',
+        'data' => $minuman
+    ]);
+}
+
 }
