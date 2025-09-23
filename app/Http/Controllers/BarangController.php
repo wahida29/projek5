@@ -205,5 +205,47 @@ public function apiUpdateMakanan(Request $request, $id)
         'data' => $barang
     ], 200);
 }
+public function apiDeleteMakanan($id)
+{
+    $barang = Menu::findOrFail($id);
 
+    $barang->delete();
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Barang berhasil dihapus'
+    ], 200);
+}
+public function apiUpdateMinuman(Request $request, $id)
+{
+    $barang = Menu::findOrFail($id);
+
+    $request->validate([
+        'name' => 'sometimes|required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'sometimes|required|numeric',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+    ]);
+
+    // Update data biasa
+    $barang->name = $request->name ?? $barang->name;
+    $barang->description = $request->description ?? $barang->description;
+    $barang->price = $request->price ?? $barang->price;
+    $barang->category = 'minuman';
+
+    $barang->save();
+    return response()->json([
+        'status' => 'success',
+        'data' => $barang
+    ], 200);
+}
+public function apiDeleteMinuman($id)
+{
+    $barang = Menu::findOrFail($id);
+
+    $barang->delete();
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Barang berhasil dihapus'
+    ], 200);
+}
 }

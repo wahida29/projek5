@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Controllers\BarangController;
 
+Route::put('/makanan/{id}', [BarangController::class, 'apiUpdateMakanan']);
+Route::delete('/makanan/{id}', [BarangController::class, 'apiDeleteMakanan']);
+Route::put('/minuman/{id}', [BarangController::class, 'apiUpdateMinuman']);
+Route::delete('/minuman/{id}', [BarangController::class, 'apiDeleteMinuman']);
 Route::post('/makanan', [BarangController::class, 'storeMakanan']);
 Route::post('/minuman', [BarangController::class, 'storeMinuman']);
 Route::get('/makanan', [BarangController::class, 'apiMakanan']);
