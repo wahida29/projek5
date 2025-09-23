@@ -137,5 +137,73 @@ public function apiMinuman()
         'data' => $minuman
     ]);
 }
+public function storeMakanan(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric',
+        'image' => 'nullable|string',
+    ]);
+
+    $barang = Menu::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'category' => 'makanan',
+        'price' => $request->price,
+        'image' => $request->image,
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $barang
+    ], 201);
+}
+
+public function storeMinuman(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric',
+        'image' => 'nullable|string',
+    ]);
+
+    $barang = Menu::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'category' => 'minuman',
+        'price' => $request->price,
+        'image' => $request->image,
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $barang
+    ], 201);
+}
+public function apiUpdateMakanan(Request $request, $id)
+{
+    $barang = Menu::findOrFail($id);
+
+    $request->validate([
+        'name' => 'sometimes|required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'sometimes|required|numeric',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+    ]);
+
+    // Update data biasa
+    $barang->name = $request->name ?? $barang->name;
+    $barang->description = $request->description ?? $barang->description;
+    $barang->price = $request->price ?? $barang->price;
+    $barang->category = 'makanan';
+
+    $barang->save();
+    return response()->json([
+        'status' => 'success',
+        'data' => $barang
+    ], 200);
+}
 
 }

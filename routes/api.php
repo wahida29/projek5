@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Controllers\BarangController;
 
+Route::post('/makanan', [BarangController::class, 'storeMakanan']);
+Route::post('/minuman', [BarangController::class, 'storeMinuman']);
 Route::get('/makanan', [BarangController::class, 'apiMakanan']);
 Route::get('/minuman', [BarangController::class, 'apiMinuman']);
 Route::post('/login', function (Request $request) {
