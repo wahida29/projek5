@@ -20,8 +20,8 @@
                                 </button>
                             </x-slot>
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('makanan')">{{ __('Makanan') }}</x-dropdown-link>
-                                <x-dropdown-link :href="route('minuman')">{{ __('Minuman') }}</x-dropdown-link>
+                                <x-dropdown-link :href="route('kopi')">{{ __('Coffee') }}</x-dropdown-link>
+                                <x-dropdown-link :href="route('nonkopi')">{{ __('Non COFFEE') }}</x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -79,11 +79,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('makanan')" :active="request()->routeIs('makanan')">
-                {{ __('Makanan') }}
+            <x-responsive-nav-link :href="route('kopi')" :active="request()->routeIs('kopi')">
+                {{ __('COFFEE') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('minuman')" :active="request()->routeIs('minuman')">
-                {{ __('Minuman') }}
+            <x-responsive-nav-link :href="route('nonkopi')" :active="request()->routeIs('nonkopi')">
+                {{ __('Non COFFEE') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('kontak')" :active="request()->routeIs('kontak')">
                 {{ __('Kontak') }}

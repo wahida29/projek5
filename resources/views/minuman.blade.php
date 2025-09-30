@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container px-4 py-8 mx-auto">
-        <h2 class="mb-10 text-3xl font-bold text-center text-orange-400">Menu Minuman</h2>
+        <h2 class="mb-10 text-3xl font-bold text-center text-orange-400">Menu Non COFFE</h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             @foreach ($menus as $menu)
                 <div class="relative flex flex-col items-center group">
@@ -26,7 +26,7 @@
         </div>
 
         <!-- Formulir Pemesanan -->
-        <form action="{{ route('pesan.minuman.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
+        <form action="{{ route('pesan.nonkopi.store') }}" method="POST" class="p-6 mt-10 bg-white rounded-lg shadow-lg" id="orderForm" enctype="multipart/form-data">
             @csrf
             <h2 class="mb-4 text-2xl font-bold text-center text-orange-500">Silahkan Pesan</h2>
 
