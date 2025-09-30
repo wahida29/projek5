@@ -11,7 +11,7 @@
                 Selamat datang di KRUSIT, tempat di mana kerenyahan dan rasa sempurna bertemu. Temukan camilan favorit baru Anda hari ini.
             </p>
             <div class="mt-8">
-                <a href="{{ route('makanan') }}" class="px-8 py-3 text-lg font-bold text-gray-900 transition duration-300 transform bg-orange-400 rounded-full shadow-lg hover:bg-orange-300 hover:scale-105">
+                <a href="{{ route('kopi') }}" class="px-8 py-3 text-lg font-bold text-gray-900 transition duration-300 transform bg-orange-400 rounded-full shadow-lg hover:bg-orange-300 hover:scale-105">
                     Lihat Menu
                 </a>
             </div>
