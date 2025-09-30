@@ -23,9 +23,11 @@
         <div class="animate-fade-in-up">
             <header class="flex flex-col items-center mb-8">
                 <!-- Logo Coffee Gallery -->
-                <div class="w-24 h-24 mb-4">
-                    <img src="{{ asset('images/logo_kopi.jpg') }}" alt="Logo Coffee Gallery" class="w-full h-full object-contain drop-shadow-lg">
-                </div>
+                <div class="mb-4">
+    <img src="{{ asset('images/logo_kopi.jpg') }}" 
+         alt="Logo Coffee Gallery" 
+         class="max-w-[120px] md:max-w-[160px] lg:max-w-[200px] h-auto mx-auto object-contain drop-shadow-lg">
+</div>
 
                 <h1 class="text-6xl font-extrabold tracking-tight md:text-8xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
                     <span class="text-white">COFFEE GALLERY</span>
