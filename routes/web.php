@@ -27,7 +27,7 @@ Route::get('/menu', function () {
 // Barang routes
 Route::resource('barang', BarangController::class)->middleware('auth');
 Route::get('/kopi', [BarangController::class, 'showKopi'])->name('kopi');
-Route::get('/minuman', [BarangController::class, 'showMinuman'])->name('minuman');
+Route::get('/nonkopi', [BarangController::class, 'showNonKopi'])->name('nonkopi');
 
 // Pemesanan routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
     Route::post('/kopi', [PemesananController::class, 'store'])->name('pesan.kopi.store');
-    Route::post('/minuman', [PemesananController::class, 'store'])->name('pesan.minuman.store');
+    Route::post('/nonkopi', [PemesananController::class, 'store'])->name('pesan.nonkopi.store');
     Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::post('/pesanan/{id}/aprove', [PemesananController::class, 'approve'])->name('pesanan.aprove');
 

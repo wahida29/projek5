@@ -8,12 +8,12 @@ use App\Http\Controllers\BarangController;
 
 Route::put('/kopi/{id}', [BarangController::class, 'apiUpdateKopi']);
 Route::delete('/kopi/{id}', [BarangController::class, 'apiDeleteKopi']);
-Route::put('/minuman/{id}', [BarangController::class, 'apiUpdateMinuman']);
-Route::delete('/minuman/{id}', [BarangController::class, 'apiDeleteMinuman']);
+Route::put('/nonkopi/{id}', [BarangController::class, 'apiUpdateNonKopi']);
+Route::delete('/nonkopi/{id}', [BarangController::class, 'apiDeleteNonKopi']);
 Route::post('/kopi', [BarangController::class, 'storeKopi']);
-Route::post('/minuman', [BarangController::class, 'storeMinuman']);
+Route::post('/nonkopi', [BarangController::class, 'storeNonKopi']);
 Route::get('/kopi', [BarangController::class, 'apiKopi']);
-Route::get('/minuman', [BarangController::class, 'apiMinuman']);
+Route::get('/nonkopi', [BarangController::class, 'apiNonKopi']);
 Route::post('/login', function (Request $request) {
     $request->validate([
         'email'    => 'required|email',

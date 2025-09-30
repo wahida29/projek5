@@ -34,7 +34,7 @@ class BarangController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:kopi,minuman',
+            'category' => 'required|in:kopi,nonkopi',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -71,7 +71,7 @@ class BarangController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:kopi,minuman',
+            'category' => 'required|in:kopi,nonkopi',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -115,10 +115,10 @@ class BarangController extends Controller
     return view('kopi', compact('menus'));
 }
 
-public function showMinuman()
+public function showNonKopi()
 {
-    $menus = Menu::where('category', 'minuman')->get();
-    return view('minuman', compact('menus'));
+    $menus = Menu::where('category', 'nonkopi')->get();
+    return view('nonkopi', compact('menus'));
 }
 public function apiKopi()
 {
@@ -129,12 +129,12 @@ public function apiKopi()
     ]);
 }
 
-public function apiMinuman()
+public function apiNonKopi()
 {
-    $minuman = menu::where('category', 'minuman')->get();
+    $nonkopi = menu::where('category', 'nonkopi')->get();
     return response()->json([
         'status' => 'success',
-        'data' => $minuman
+        'data' => $nonkopi
     ]);
 }
 public function storeKopi(Request $request)
@@ -164,7 +164,7 @@ if ($request->hasFile('image')) {
     ], 201);
 }
 
-public function storeMinuman(Request $request)
+public function storeNonKopi(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -176,7 +176,7 @@ public function storeMinuman(Request $request)
     $barang = Menu::create([
         'name' => $request->name,
         'description' => $request->description,
-        'category' => 'minuman',
+        'category' => 'nonkopi',
         'price' => $request->price,
         'image' => $request->image,
     ]);
@@ -219,7 +219,7 @@ public function apiDeleteKopi($id)
         'message' => 'Barang berhasil dihapus'
     ], 200);
 }
-public function apiUpdateMinuman(Request $request, $id)
+public function apiUpdateNonkopi(Request $request, $id)
 {
     $barang = Menu::findOrFail($id);
 
@@ -234,7 +234,7 @@ public function apiUpdateMinuman(Request $request, $id)
     $barang->name = $request->name ?? $barang->name;
     $barang->description = $request->description ?? $barang->description;
     $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'minuman';
+    $barang->category = 'nonkopi';
 
     $barang->save();
     return response()->json([
@@ -242,7 +242,7 @@ public function apiUpdateMinuman(Request $request, $id)
         'data' => $barang
     ], 200);
 }
-public function apiDeleteMinuman($id)
+public function apiDeleteNonKopi($id)
 {
     $barang = Menu::findOrFail($id);
 
