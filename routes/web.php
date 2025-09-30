@@ -26,13 +26,13 @@ Route::get('/menu', function () {
 
 // Barang routes
 Route::resource('barang', BarangController::class)->middleware('auth');
-Route::get('/makanan', [BarangController::class, 'showMakanan'])->name('makanan');
+Route::get('/kopi', [BarangController::class, 'showMakanan'])->name('kopi');
 Route::get('/minuman', [BarangController::class, 'showMinuman'])->name('minuman');
 
 // Pemesanan routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
-    Route::post('/makanan/store', [PemesananController::class, 'store'])->name('pesan.makanan2.store');
+    Route::post('/kopi/store', [PemesananController::class, 'store'])->name('pesan.kopi2.store');
     Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::post('/pesanan/{id}/approve', [PemesananController::class, 'approve'])->name('pesanan.approve');
 });
@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
-    Route::post('/makanan', [PemesananController::class, 'store'])->name('pesan.makanan.store');
+    Route::post('/kopi', [PemesananController::class, 'store'])->name('pesan.kopi.store');
     Route::post('/minuman', [PemesananController::class, 'store'])->name('pesan.minuman.store');
     Route::delete('/pesanan/{id}', [PemesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::post('/pesanan/{id}/aprove', [PemesananController::class, 'approve'])->name('pesanan.aprove');

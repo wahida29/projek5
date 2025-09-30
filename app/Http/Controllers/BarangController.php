@@ -153,7 +153,7 @@ if ($request->hasFile('image')) {
     $barang = Menu::create([
         'name' => $request->name,
         'description' => $request->description,
-        'category' => 'kopi',
+        'category' => 'makanan',
         'price' => $request->price,
         'image' => $request->image,
     ]);
@@ -201,7 +201,7 @@ public function apiUpdateMakanan(Request $request, $id)
     $barang->name = $request->name ?? $barang->name;
     $barang->description = $request->description ?? $barang->description;
     $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'kopi';
+    $barang->category = 'makanan';
 
     $barang->save();
     return response()->json([
