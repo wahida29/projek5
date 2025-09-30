@@ -26,7 +26,7 @@ Route::get('/menu', function () {
 
 // Barang routes
 Route::resource('barang', BarangController::class)->middleware('auth');
-Route::get('/kopi', [BarangController::class, 'showMakanan'])->name('kopi');
+Route::get('/kopi', [BarangController::class, 'showKopi'])->name('kopi');
 Route::get('/minuman', [BarangController::class, 'showMinuman'])->name('minuman');
 
 // Pemesanan routes

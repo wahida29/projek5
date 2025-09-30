@@ -109,7 +109,7 @@ class BarangController extends Controller
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus');
     }
-    public function showMakanan()
+    public function showKopi()
 {
     $menus = Menu::where('category', 'kopi')->get();
     return view('kopi', compact('menus'));
@@ -120,7 +120,7 @@ public function showMinuman()
     $menus = Menu::where('category', 'minuman')->get();
     return view('minuman', compact('menus'));
 }
-public function apiMakanan()
+public function apiKopi()
 {
     $kopi = menu::where('category', 'kopi')->get();
     return response()->json([
@@ -137,7 +137,7 @@ public function apiMinuman()
         'data' => $minuman
     ]);
 }
-public function storeMakanan(Request $request)
+public function storeKopi(Request $request)
 {
     $request->validate([
     'name' => 'required|string|max:255',
@@ -153,7 +153,7 @@ if ($request->hasFile('image')) {
     $barang = Menu::create([
         'name' => $request->name,
         'description' => $request->description,
-        'category' => 'makanan',
+        'category' => 'kopi',
         'price' => $request->price,
         'image' => $request->image,
     ]);
@@ -186,7 +186,7 @@ public function storeMinuman(Request $request)
         'data' => $barang
     ], 201);
 }
-public function apiUpdateMakanan(Request $request, $id)
+public function apiUpdateKopi(Request $request, $id)
 {
     $barang = Menu::findOrFail($id);
 
@@ -201,7 +201,7 @@ public function apiUpdateMakanan(Request $request, $id)
     $barang->name = $request->name ?? $barang->name;
     $barang->description = $request->description ?? $barang->description;
     $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'makanan';
+    $barang->category = 'kopi';
 
     $barang->save();
     return response()->json([
@@ -209,7 +209,7 @@ public function apiUpdateMakanan(Request $request, $id)
         'data' => $barang
     ], 200);
 }
-public function apiDeleteMakanan($id)
+public function apiDeleteKopi($id)
 {
     $barang = Menu::findOrFail($id);
 
