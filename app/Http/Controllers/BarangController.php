@@ -143,11 +143,7 @@ public function storeKopi(Request $request)
     'name' => 'required|string|max:255',
     'description' => 'nullable|string',
     'price' => 'required|numeric',
-    'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 ]);
-if ($request->hasFile('image')) {
-    $path = $request->file('image')->store('images', 'public');
-}
 
 
     $barang = Menu::create([
@@ -155,7 +151,6 @@ if ($request->hasFile('image')) {
         'description' => $request->description,
         'category' => 'kopi',
         'price' => $request->price,
-        'image' => $request->image,
     ]);
 
     return response()->json([
