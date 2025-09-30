@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -13,19 +14,16 @@
 </head>
 <body class="relative flex items-center justify-center min-h-screen font-sans bg-center bg-cover bg-hero-coffee">
 
+    <!-- Overlay -->
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent"></div>
 
     <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center text-white">
 
         <div class="animate-fade-in-up">
             <header class="flex flex-col items-center mb-8">
-                <div class="w-20 h-20 mb-4 text-yellow-600">
-                    <!-- Ikon Coffee -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-full h-full drop-shadow-lg" viewBox="0 0 16 16">
-                        <path d="M6 1v2h4V1H6z"/>
-                        <path fill-rule="evenodd" d="M4 4h8v5a4 4 0 0 1-8 0V4zm8-1a1 1 0 0 1 1 1v5a5 5 0 0 1-10 0V4a1 1 0 0 1 1-1h8z"/>
-                        <path d="M3 13h10v1H3v-1z"/>
-                    </svg>
+                <!-- Logo Coffee Gallery -->
+                <div class="w-24 h-24 mb-4">
+                    <img src="{{ asset('images/logo_kopi.jpg') }}" alt="Logo Coffee Gallery" class="w-full h-full object-contain drop-shadow-lg">
                 </div>
 
                 <h1 class="text-6xl font-extrabold tracking-tight md:text-8xl" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
@@ -36,6 +34,7 @@
                 </p>
             </header>
 
+            <!-- Tombol Aksi -->
             <div class="flex flex-col justify-center gap-4 mt-10 md:flex-row">
                 <a href="{{ route('register') }}"
                    class="px-8 py-3 text-lg font-bold text-gray-900 transition duration-300 transform bg-yellow-500 border-2 border-yellow-500 shadow-lg rounded-xl hover:bg-yellow-400 hover:scale-105">
@@ -50,3 +49,4 @@
     </main>
 </body>
 </html>
+```
