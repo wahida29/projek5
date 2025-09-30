@@ -143,12 +143,8 @@ public function storeKopi(Request $request)
     'name' => 'required|string|max:255',
     'description' => 'nullable|string',
     'price' => 'required|numeric',
-    'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    'image' => 'nullable|string',
 ]);
-if ($request->hasFile('image')) {
-    $path = $request->file('image')->store('images', 'public');
-}
-
 
     $barang = Menu::create([
         'name' => $request->name,
@@ -194,7 +190,7 @@ public function apiUpdateKopi(Request $request, $id)
         'name' => 'sometimes|required|string|max:255',
         'description' => 'nullable|string',
         'price' => 'sometimes|required|numeric',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        'image' => 'nullable|string'
     ]);
 
     // Update data biasa
@@ -227,7 +223,7 @@ public function apiUpdateNonkopi(Request $request, $id)
         'name' => 'sometimes|required|string|max:255',
         'description' => 'nullable|string',
         'price' => 'sometimes|required|numeric',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        'image' => 'nullable|string'
     ]);
 
     // Update data biasa
