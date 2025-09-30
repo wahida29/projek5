@@ -34,7 +34,7 @@ class BarangController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:makanan,minuman',
+            'category' => 'required|in:kopi,minuman',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -71,7 +71,7 @@ class BarangController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|in:makanan,minuman',
+            'category' => 'required|in:kopi,minuman',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -111,8 +111,8 @@ class BarangController extends Controller
     }
     public function showMakanan()
 {
-    $menus = Menu::where('category', 'makanan')->get();
-    return view('makanan', compact('menus'));
+    $menus = Menu::where('category', 'kopi')->get();
+    return view('kopi', compact('menus'));
 }
 
 public function showMinuman()
@@ -122,10 +122,10 @@ public function showMinuman()
 }
 public function apiMakanan()
 {
-    $makanan = menu::where('category', 'makanan')->get();
+    $kopi = menu::where('category', 'kopi')->get();
     return response()->json([
         'status' => 'success',
-        'data' => $makanan
+        'data' => $kopi
     ]);
 }
 
@@ -153,7 +153,7 @@ if ($request->hasFile('image')) {
     $barang = Menu::create([
         'name' => $request->name,
         'description' => $request->description,
-        'category' => 'makanan',
+        'category' => 'kopi',
         'price' => $request->price,
         'image' => $request->image,
     ]);
@@ -201,7 +201,7 @@ public function apiUpdateMakanan(Request $request, $id)
     $barang->name = $request->name ?? $barang->name;
     $barang->description = $request->description ?? $barang->description;
     $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'makanan';
+    $barang->category = 'kopi';
 
     $barang->save();
     return response()->json([
