@@ -15,7 +15,7 @@ class CreateMenusTable extends Migration
             $table->id();
             $table->string('name'); // Nama menu
             $table->text('description')->nullable(); // Deskripsi menu (opsional)
-            $table->enum('category', ['makanan', 'minuman']); // Kategori menu
+            $table->enum('category', ['kopi', 'nonkopi']); // Kategori menu
             $table->decimal('price', 10, 2); // Harga menu
             $table->string('image')->nullable(); // Path gambar menu
             $table->timestamps();

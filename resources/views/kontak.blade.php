@@ -4,10 +4,10 @@
         <div class="relative z-20 px-6 mx-auto max-w-7xl sm:px-8">
             <div class="p-6 text-center">
                 <p class="text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
-                    Selamat Datang di KRUSIT
+                    Selamat Datang di caffe kopi
                 </p>
                 <p class="mt-2 text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">
-                    <span class="font-extrabold text-orange-400 text-7xl">Makanan Favorit Anda</span>
+                    <span class="font-extrabold text-orange-400 text-7xl">minuman Favorit Anda</span>
                 </p>
             </div>
         </div>
@@ -48,7 +48,7 @@
     <!-- Footer Section -->
     <footer class="py-6 text-white bg-gray-900">
         <div class="container mx-auto text-center">
-            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
+            <p class="text-lg font-semibold">&copy; 2024 caffe kopi. All rights reserved.</p>
             <div class="flex justify-center mt-4 space-x-6">
                 <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
                 <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>
