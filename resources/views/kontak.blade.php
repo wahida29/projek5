@@ -1,6 +1,6 @@
 <x-app-layout>
     <!-- Background Section -->
-    <div class="relative h-screen py-12 bg-center rounded-lg" style="background-image: url('/img/krusit2.png'); background-size: cover; background-position: center;">
+    <div class="relative h-screen py-12 bg-center rounded-lg" style="background-image: url('public/img/kopii.jpg'); background-size: cover; background-position: center;">
         <div class="relative z-20 px-6 mx-auto max-w-7xl sm:px-8">
             <div class="p-6 text-center">
                 <p class="text-5xl font-semibold text-white" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">

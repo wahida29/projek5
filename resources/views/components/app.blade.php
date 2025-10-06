@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Krusit') }}</title>
+        <title>{{ config('app.name', 'Coffee Gallery') }}</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +44,7 @@
                         <span class="text-gray-500">|</span>
                         <a href="{{ url('/login') }}" class="font-medium text-orange-400 hover:text-orange-500">Masuk</a>
                     </p>
-                    <p class="mt-4 text-xs text-gray-500">&copy; 2025 Krusit. All rights reserved.</p>
+                    <p class="mt-4 text-xs text-gray-500">&copy; 2025 coffee Gallery. All rights reserved.</p>
                 </div>
             </footer>
         </div>

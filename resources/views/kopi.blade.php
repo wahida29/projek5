@@ -205,7 +205,7 @@
 
     <footer class="py-6 text-white bg-gray-900">
         <div class="container mx-auto text-center">
-            <p class="text-lg font-semibold">&copy; 2024 KRUSIT. All rights reserved.</p>
+            <p class="text-lg font-semibold">&copy; 2024 Caffee Gallery. All rights reserved.</p>
             <div class="flex justify-center mt-4 space-x-6">
                 <a href="#" class="text-white transition hover:text-orange-400">Facebook</a>
                 <a href="#" class="text-white transition hover:text-orange-400">Instagram</a>

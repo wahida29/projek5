@@ -24,7 +24,7 @@
             <div class="mb-4">
                 <label for="category" class="block text-lg font-semibold text-gray-700">Kategori:</label>
                 <select id="category" name="category" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    <option value="makanan">Makanan</option>
+                    <option value="makanan">Minuman kopi</option>
                     <option value="minuman">Minuman</option>
                 </select>
             </div>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container px-4 py-8 mx-auto">
-        <h2 class="mb-6 text-2xl font-bold text-center text-orange-400">Pesan Makanan</h2>
+        <h2 class="mb-6 text-2xl font-bold text-center text-orange-400">Pesan Minuman</h2>
         <div class="max-w-lg p-6 mx-auto bg-white rounded-lg shadow-lg">
             <h3 class="mb-4 text-xl font-semibold">{{ $menu->name }}</h3>
             <p class="mb-2 text-gray-600">Harga: Rp{{ number_format($menu->price, 0, ',', '.') }}</p>

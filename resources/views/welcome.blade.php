@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -11,26 +10,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Jika ada CSS custom -->
+    <!-- CSS custom -->
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 
     <!-- Laravel Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="relative flex items-center justify-center min-h-screen font-sans bg-cover bg-center bg-hero-coffee">
 
-    <!-- Overlay Gelap -->
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent"></div>
+    <style>
+        /* Background full foto */
+        .bg-hero-coffee {
+            background-image: url('{{ asset('img/biji.jpg') }}'); /* Pastikan letak file benar: public/img/biji.jpg */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body class="relative flex items-center justify-center min-h-screen font-sans bg-hero-coffee">
+
+    <!-- Overlay Gelap supaya teks jelas -->
+    <div class="absolute inset-0 bg-black/70"></div>
 
     <!-- Konten Utama -->
     <main class="relative z-10 flex flex-col items-center justify-center px-6 text-center text-white">
         <header class="flex flex-col items-center mb-8 animate-fade-in-up">
-            
+
             <!-- Logo -->
             <div class="mb-6">
-                <img src="{{ asset('images/logo_kopi.jpg') }}" 
+                <img src="{{ asset('img/logo_kopi.jpg') }}" 
                      alt="Logo Coffee Gallery" 
-                     class="w-28 md:w-40 lg:w-52 h-auto mx-auto object-contain drop-shadow-lg">
+                     class="w-28 md:w-40 lg:w-52 h-auto mx-auto object-contain drop-shadow-lg rounded-full bg-white/90 p-2">
             </div>
 
             <!-- Judul -->
@@ -39,7 +49,7 @@
             </h1>
 
             <!-- Deskripsi -->
-            <p class="mt-4 text-base md:text-lg lg:text-xl max-w-2xl text-gray-300">
+            <p class="mt-4 text-base md:text-lg lg:text-xl max-w-2xl text-gray-200 drop-shadow-md">
                 Sajian kopi hangat dari biji pilihan terbaik. Rasakan aroma dan kenikmatan kopi yang membuat harimu lebih bersemangat.
             </p>
         </header>
@@ -60,4 +70,3 @@
 
 </body>
 </html>
-
