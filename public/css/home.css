@@ -1,0 +1,131 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  text-decoration: none;
+
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: white;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.4rem 7%;
+  margin : 0;
+  background-color: rgba(1, 1, 1, 0.8);
+  border-bottom: 1px solid orange;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.navbar .logo {
+  padding: 0;
+  margin: 0;
+  font-weight: bold;
+  font-size: 2em;
+  color: orange;
+}
+
+
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-nav li {
+  list-style-type: none;
+  padding: 15px;
+}
+
+.navbar-nav li a {
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.navbar-nav li a:hover {
+  color: orange;
+  transition: all 0.2s ease-in-out;
+}
+
+.background-image {
+  z-index: -9999;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: url("bakso-ayam-goreng.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.5);
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 30%;
+  bottom: 0;
+}
+
+.hero .content {
+  margin-top:40px;
+  padding: 20px;
+  color : white;
+}
+
+.hero .content h1 {
+  font-size: 5em;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(1, 1, 3, 0.5);
+  line-height: 1.2;
+  max-width: 100rem;
+}
+
+.hero .content h1 span {
+  color: orange;
+}
+
+.hero .content p {
+  max-width: 60rem;
+  font-size: 1.6rem;
+  margin-top: 1rem;
+  line-height: 1.4;
+  font-weight: 100;
+  text-shadow: 1px 1px 3px rgba(1, 1, 3, 0.5);
+}
+
+
+footer {
+  margin : 0;
+  padding: 0;
+  background-color: orange;
+  text-align: center;
+  padding: 1rem 0 2rem;
+}
