@@ -25,8 +25,8 @@
             <div class="mb-4">
                 <label for="category" class="block text-lg font-semibold text-gray-700">Kategori:</label>
                 <select id="category" name="category" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    <option value="makanan" {{ old('category', $menu->category) == 'makanan' ? 'selected' : '' }}>Makanan</option>
-                    <option value="minuman" {{ old('category', $menu->category) == 'minuman' ? 'selected' : '' }}>Minuman</option>
+                    <option value="kopi" {{ old('category', $menu->category) == 'kopi' ? 'selected' : '' }}>kopi</option>
+                    <option value="nonkopi" {{ old('category', $menu->category) == 'nonkopi' ? 'selected' : '' }}>nonkopi</option>
                 </select>
             </div>
             <div class="mb-4">
