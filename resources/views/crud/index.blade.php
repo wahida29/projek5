@@ -7,11 +7,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body { background: #f8f9fa; }
-    h1 { font-weight: 700; color: #333; }
+    h1 { font-weight: 700; color: #222; }
     .tab-pane { animation: fadeIn 0.4s ease-in-out; }
     @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     .reload-btn { float: right; font-size: 0.9rem; }
     .alert-custom { display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; }
+    .spinner { text-align: center; padding: 30px; color: #888; font-style: italic; }
   </style>
 </head>
 <body>
@@ -38,42 +39,42 @@
       <h3>☕ CaffeShop (Kelompok 5)
         <button class="btn btn-sm btn-outline-dark reload-btn" onclick="loadKelompok5()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tableKopi"></table>
+      <div id="tableKopi" class="spinner">⏳ Memuat data...</div>
     </div>
 
     <div class="tab-pane fade" id="k4">
       <h3>🍔 Krusit (Kelompok 4)
         <button class="btn btn-sm btn-outline-primary reload-btn" onclick="loadKelompok4()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tableK4"></table>
+      <div id="tableK4" class="spinner">⏳ Memuat data...</div>
     </div>
 
     <div class="tab-pane fade" id="promo">
       <h3>💸 SobatPromo
         <button class="btn btn-sm btn-outline-success reload-btn" onclick="loadSobatPromo()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tablePromo"></table>
+      <div id="tablePromo" class="spinner">⏳ Memuat data...</div>
     </div>
 
     <div class="tab-pane fade" id="justbuy">
       <h3>🛍️ JustBuy
         <button class="btn btn-sm btn-outline-warning reload-btn" onclick="loadJustBuy()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tableJustBuy"></table>
+      <div id="tableJustBuy" class="spinner">⏳ Memuat data...</div>
     </div>
 
     <div class="tab-pane fade" id="reservasi">
       <h3>📅 Reservasi (Kelompok 6)
         <button class="btn btn-sm btn-outline-danger reload-btn" onclick="loadReservasi()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tableReservasi"></table>
+      <div id="tableReservasi" class="spinner">⏳ Memuat data...</div>
     </div>
 
     <div class="tab-pane fade" id="public">
       <h3>🌍 Public API
         <button class="btn btn-sm btn-outline-secondary reload-btn" onclick="loadPublic()">🔁 Reload</button>
       </h3>
-      <table class="table table-hover mt-3" id="tablePublic"></table>
+      <div id="tablePublic" class="spinner">⏳ Memuat data...</div>
     </div>
   </div>
 </div>
@@ -94,74 +95,118 @@ function showAlert() {
   setTimeout(() => { alertBox.style.display = "none"; }, 2000);
 }
 
+// === Helper fetch dengan retry ===
+async function fetchWithRetry(url, retries = 2, delay = 1500) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Response not OK");
+      return await res.json();
+    } catch (err) {
+      if (i < retries) await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  throw new Error("Fetch gagal setelah retry");
+}
+
 // === KELOMPOK 5 ===
 async function loadKelompok5() {
+  const el = document.querySelector("#tableKopi");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const kopi = await (await fetch(`${API_K5}/kopi`)).json();
-    const non = await (await fetch(`${API_K5}/nonkopi`)).json();
-    document.querySelector("#tableKopi").innerHTML = `
+    const kopi = await fetchWithRetry(`${API_K5}/kopi`);
+    const non = await fetchWithRetry(`${API_K5}/nonkopi`);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-dark"><tr><th>ID</th><th>Nama</th><th>Deskripsi</th><th>Harga</th><th>Gambar</th></tr></thead>
       <tbody>${[...kopi, ...non].map(i => `
         <tr><td>${i.id}</td><td>${i.name}</td><td>${i.description}</td><td>${i.price}</td><td>${i.image || '-'}</td></tr>`).join('')}
-      </tbody>`;
+      </tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tableKopi").innerHTML = `<tr><td>⚠️ API Kelompok 5 tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API Kelompok 5 tidak merespon</div>`;
+  }
 }
 
 // === KELOMPOK 4 ===
 async function loadKelompok4() {
+  const el = document.querySelector("#tableK4");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const mkn = await (await fetch(`${API_K4}/makanan`)).json();
-    const mnm = await (await fetch(`${API_K4}/minuman`)).json();
-    document.querySelector("#tableK4").innerHTML = `
+    const mkn = await fetchWithRetry(`${API_K4}/makanan`);
+    const mnm = await fetchWithRetry(`${API_K4}/minuman`);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-primary"><tr><th>ID</th><th>Nama</th><th>Deskripsi</th><th>Harga</th></tr></thead>
-      <tbody>${[...mkn, ...mnm].map(i => `<tr><td>${i.id}</td><td>${i.name}</td><td>${i.description}</td><td>${i.price}</td></tr>`).join('')}</tbody>`;
+      <tbody>${[...mkn, ...mnm].map(i => `<tr><td>${i.id}</td><td>${i.name}</td><td>${i.description}</td><td>${i.price}</td></tr>`).join('')}</tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tableK4").innerHTML = `<tr><td>⚠️ API Kelompok 4 tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API Kelompok 4 tidak merespon</div>`;
+  }
 }
 
 // === SOBATPROMO ===
 async function loadSobatPromo() {
+  const el = document.querySelector("#tablePromo");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const data = await (await fetch(`${API_PROMO}?action=list`)).json();
-    document.querySelector("#tablePromo").innerHTML = `
+    const data = await fetchWithRetry(`${API_PROMO}?action=list`);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-success"><tr><th>Judul</th><th>Deskripsi</th><th>Berlaku Sampai</th></tr></thead>
-      <tbody>${data.map(p => `<tr><td>${p.title || '-'}</td><td>${p.description || '-'}</td><td>${p.valid_until || '-'}</td></tr>`).join('')}</tbody>`;
+      <tbody>${data.map(p => `<tr><td>${p.title || '-'}</td><td>${p.description || '-'}</td><td>${p.valid_until || '-'}</td></tr>`).join('')}</tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tablePromo").innerHTML = `<tr><td>⚠️ API SobatPromo tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API SobatPromo tidak merespon</div>`;
+  }
 }
 
 // === JUSTBUY ===
 async function loadJustBuy() {
+  const el = document.querySelector("#tableJustBuy");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const data = await (await fetch(`${API_JB}/produk`)).json();
-    document.querySelector("#tableJustBuy").innerHTML = `
+    const data = await fetchWithRetry(`${API_JB}/produk`);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-warning"><tr><th>ID</th><th>Nama Produk</th><th>Harga</th></tr></thead>
-      <tbody>${data.map(i => `<tr><td>${i.id}</td><td>${i.name || i.nama}</td><td>${i.price || i.harga}</td></tr>`).join('')}</tbody>`;
+      <tbody>${data.map(i => `<tr><td>${i.id}</td><td>${i.name || i.nama}</td><td>${i.price || i.harga}</td></tr>`).join('')}</tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tableJustBuy").innerHTML = `<tr><td>⚠️ API JustBuy tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API JustBuy tidak merespon</div>`;
+  }
 }
 
 // === RESERVASI ===
 async function loadReservasi() {
+  const el = document.querySelector("#tableReservasi");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const data = await (await fetch(`${API_RES}/reservasi`)).json();
-    document.querySelector("#tableReservasi").innerHTML = `
+    const data = await fetchWithRetry(`${API_RES}/reservasi`);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-danger"><tr><th>ID</th><th>Nama</th><th>Tanggal</th><th>Jam</th></tr></thead>
-      <tbody>${data.map(r => `<tr><td>${r.id}</td><td>${r.nama || r.name}</td><td>${r.tanggal || '-'}</td><td>${r.jam || '-'}</td></tr>`).join('')}</tbody>`;
+      <tbody>${data.map(r => `<tr><td>${r.id}</td><td>${r.nama || r.name}</td><td>${r.tanggal || '-'}</td><td>${r.jam || '-'}</td></tr>`).join('')}</tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tableReservasi").innerHTML = `<tr><td>⚠️ API Reservasi tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API Reservasi tidak merespon</div>`;
+  }
 }
 
 // === PUBLIC API ===
 async function loadPublic() {
+  const el = document.querySelector("#tablePublic");
+  el.innerHTML = `<div class='spinner'>⏳ Memuat data...</div>`;
   try {
-    const data = await (await fetch(API_PUBLIC)).json();
-    document.querySelector("#tablePublic").innerHTML = `
+    const data = await fetchWithRetry(API_PUBLIC);
+    el.innerHTML = `
+      <table class="table table-hover">
       <thead class="table-secondary"><tr><th>ID</th><th>Judul</th><th>Konten</th></tr></thead>
-      <tbody>${data.slice(0,10).map(p => `<tr><td>${p.id}</td><td>${p.title}</td><td>${p.body}</td></tr>`).join('')}</tbody>`;
+      <tbody>${data.slice(0,10).map(p => `<tr><td>${p.id}</td><td>${p.title}</td><td>${p.body}</td></tr>`).join('')}</tbody></table>`;
     showAlert();
-  } catch { document.querySelector("#tablePublic").innerHTML = `<tr><td>⚠️ API Public tidak merespon</td></tr>`; }
+  } catch {
+    el.innerHTML = `<div class='alert alert-warning'>⚠️ API Public tidak merespon</div>`;
+  }
 }
 
 // === Load semua data di awal ===
