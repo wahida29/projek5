@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="container py-4">
-  <h1 class="text-center mb-4">🌐 Dashboard Kolaborasi CRUD 6 Kelompok</h1>
+  <h1 class="text-center mb-4">🌐 Dashboard Kolaborasi CRUD</h1>
 
   <!-- Notifikasi -->
   <div id="alertBox" class="alert alert-success alert-custom" role="alert">
