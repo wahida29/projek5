@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\Http;
 
 Route::get('/', fn() => view('welcome'));
 
+// Dashboard default Laravel
 Route::get('/dashboard', fn() => view('dashboard'))
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Halaman tambahan untuk user login
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/kontak', fn() => view('kontak'))->name('kontak');
     Route::get('/menu', fn() => view('menu'))->name('menu');
@@ -50,26 +52,31 @@ Route::middleware('auth')->group(function () {
 // Authentication routes
 require __DIR__ . '/auth.php';
 
-// CRUD Dashboard utama
-Route::get('/crud', fn() => view('crud.index'))->name('crud.index');
+/*
+|--------------------------------------------------------------------------
+| 🌐 DASHBOARD KOLABORASI CRUD (untuk 7 kelompok)
+|--------------------------------------------------------------------------
+| File view: resources/views/index.blade.php
+| Akses URL: http://localhost:8000/crud
+|--------------------------------------------------------------------------
+*/
+Route::get('/crud', fn() => view('index'))->name('crud');
 
 /*
 |--------------------------------------------------------------------------
 | 🔗 PROXY 7 KELOMPOK (ANTI-CORS UNTUK DASHBOARD)
 |--------------------------------------------------------------------------
-| Mendukung GET, POST, PUT, PATCH, DELETE
-| Supaya semua API (K3–K7) bisa diakses lewat /proxy/{kelompok}/...
+| Mendukung GET, POST, PUT, PATCH, DELETE untuk akses API kelompok lain
 |--------------------------------------------------------------------------
 */
-
 Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endpoint?}', function ($kelompok, $endpoint = '') {
     $apis = [
-        'k3'        => 'https://gadgethouse-production.up.railway.app/api',                 // 📱 Kelompok 3
-        'k4'        => 'https://projekkelompok4-production-3d9b.up.railway.app/api',       // 🍔 Kelompok 4
-        'k5'        => 'https://projek5-production.up.railway.app/api',                    // ☕ Kelompok 5 (CaffeShop)
-        'promo'     => 'https://sobatpromo-api-production.up.railway.app/api',             // 💸 Kelompok 2
-        'justbuy'   => 'https://justbuy-production.up.railway.app/api',                    // 🛍️ Kelompok 1
-        'reservasi' => 'https://reservasi-production.up.railway.app/api',                  // 📅 Kelompok 6
+        'k3'        => 'https://gadgethouse-production.up.railway.app/api',
+        'k4'        => 'https://projekkelompok4-production-3d9b.up.railway.app/api',
+        'k5'        => 'https://projek5-production.up.railway.app/api',
+        'promo'     => 'https://sobatpromo-api-production.up.railway.app/api.php',
+        'justbuy'   => 'https://justbuy-production.up.railway.app/api',
+        'reservasi' => 'https://reservasi-production.up.railway.app/api',
     ];
 
     if (!array_key_exists($kelompok, $apis)) {
@@ -78,9 +85,7 @@ Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endp
 
     $base = rtrim($apis[$kelompok], '/');
     $endpoint = ltrim($endpoint, '/');
-
-    // ✅ AUTO PERBAIKAN: endpoint kosong → arahkan ke root API
-    $url = $endpoint ? "$base/$endpoint" : "$base";
+    $url = $endpoint ? "$base/$endpoint" : $base;
 
     try {
         $method = request()->method();
@@ -108,18 +113,14 @@ Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endp
 
 /*
 |--------------------------------------------------------------------------
-| ✅ TAMBAHAN KHUSUS: CEK UJI MANUAL SETIAP API
+| 🔍 UJI CEK KONEKSI MANUAL
 |--------------------------------------------------------------------------
-| Jalankan untuk memastikan semua koneksi hidup:
-|   - /proxy/k3/produk
-|   - /proxy/k4/makanan
-|   - /proxy/k5/kopi
-|   - /proxy/promo
-|   - /proxy/justbuy/produk
-|   - /proxy/reservasi/reservasi
+| Contoh:
+|   /test/proxy/k5/kopi
+|   /test/proxy/k4/makanan
+|   /test/proxy/k3/produk
 |--------------------------------------------------------------------------
 */
-
 Route::get('/test/proxy/{kelompok}/{endpoint?}', function ($kelompok, $endpoint = '') {
     return redirect("/proxy/$kelompok/$endpoint");
 });

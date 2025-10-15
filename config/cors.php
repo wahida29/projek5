@@ -4,39 +4,43 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | 🌍 Laravel CORS Configuration (Final & Optimized for Full CRUD + Railway)
+    | 🌍 Laravel CORS Configuration (Full CRUD + Proxy Safe)
     |--------------------------------------------------------------------------
     |
-    | Konfigurasi ini memastikan semua route API dan proxy kamu bisa diakses
-    | lintas domain (misal dari file HTML, proyek Laravel lain, atau frontend
-    | yang dihosting di Railway/Netlify/Vercel).
-    |
-    | Konfigurasi ini kompatibel untuk request GET, POST, PUT, PATCH, DELETE
-    | dan sudah aman dari error preflight (OPTIONS).
+    | Konfigurasi ini memastikan semua request lintas domain (frontend → backend)
+    | dapat berjalan tanpa error CORS — termasuk saat pakai fetch(), axios,
+    | Postman, Railway, Netlify, Vercel, dan localhost.
     |
     */
 
-    // ✅ Semua endpoint API, sanctum, dan proxy
-    'paths' => ['api/*', 'proxy/*', 'sanctum/csrf-cookie'],
+    // ✅ Semua endpoint API dan proxy diizinkan lintas domain
+    'paths' => [
+        'api/*',
+        'proxy/*',
+        'sanctum/csrf-cookie',
+        '*', // tambahan agar semua route termasuk /crud bisa akses bebas
+    ],
 
-    // ✅ Izinkan semua metode HTTP (GET, POST, PUT, PATCH, DELETE, OPTIONS)
-    'allowed_methods' => ['*'],
+    // ✅ Izinkan semua metode HTTP (CRUD + OPTIONS)
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    // ✅ Izinkan semua domain (localhost, Railway, Netlify, Vercel, dll)
+    // ✅ Izinkan semua origin (domain mana pun)
     'allowed_origins' => ['*'],
 
-    // (Opsional) Pola wildcard domain tambahan
+    // ✅ Jika perlu domain spesifik, tambahkan di sini:
+    // 'allowed_origins' => ['http://localhost:8000', 'https://projek5-production.up.railway.app'],
+
     'allowed_origins_patterns' => [],
 
-    // ✅ Izinkan semua header (termasuk Authorization, Content-Type)
+    // ✅ Semua header diperbolehkan
     'allowed_headers' => ['*'],
 
-    // ✅ Header yang dapat diakses oleh frontend
+    // ✅ Header yang boleh dibaca oleh frontend
     'exposed_headers' => ['Authorization', 'Content-Type', 'X-Requested-With'],
 
     // ✅ Cache preflight selama 1 jam
     'max_age' => 3600,
 
-    // ⚠️ Jangan aktifkan credential kecuali pakai cookie/session
+    // ✅ Credential (set true hanya jika pakai login berbasis cookie)
     'supports_credentials' => false,
 ];
