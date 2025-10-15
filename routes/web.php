@@ -25,12 +25,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/menu', fn() => view('menu'))->name('menu');
 });
 
-// Barang
+// Barang routes
 Route::resource('barang', BarangController::class)->middleware('auth');
 Route::get('/kopi', [BarangController::class, 'showKopi'])->name('kopi');
 Route::get('/nonkopi', [BarangController::class, 'showNonKopi'])->name('nonkopi');
 
-// Pemesanan
+// Pemesanan routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lihat-pesanan', [PemesananController::class, 'index'])->name('pesanan.index');
     Route::post('/kopi/store', [PemesananController::class, 'store'])->name('pesan.kopi2.store');
@@ -41,14 +41,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/pesanan/{id}/aprove', [PemesananController::class, 'approve'])->name('pesanan.aprove');
 });
 
-// Profil
+// Profil management
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Autentikasi
+// Authentication routes
 require __DIR__ . '/auth.php';
 
 // CRUD dashboard utama
@@ -57,16 +57,15 @@ Route::get('/crud', fn() => view('crud.index'))->name('crud.index');
 
 /*
 |--------------------------------------------------------------------------
-| 🔗 PROXY API 7 KELOMPOK (ANTI CORS UNTUK RAILWAY)
+| 🔗 PROXY API 7 KELOMPOK (TAMBAHAN UNTUK FULL CRUD)
 |--------------------------------------------------------------------------
-|
-| Route ini digunakan untuk meneruskan request frontend (index.blade.php)
-| ke API masing-masing kelompok agar bisa full CRUD (GET, POST, PUT, DELETE).
-| Tidak bentrok dengan route lain.
-|
+| Bagian ini ditambahkan tanpa menghapus apa pun di atas.
+| Gunanya supaya index.blade.php bisa akses API luar (anti-CORS).
+| Mendukung GET, POST, PUT, PATCH, DELETE.
+|--------------------------------------------------------------------------
 */
 
-Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endpoint?}', function ($kelompok, $endpoint = '') {
+Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endpoint?}', function ($kelompok, $endpoint = null) {
     $apis = [
         'k3'        => 'https://gadgethouse-production.up.railway.app/api/',
         'k4'        => 'https://projekkelompok4-production-3d9b.up.railway.app/api/',
@@ -76,16 +75,17 @@ Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endp
         'reservasi' => 'https://reservasi-production.up.railway.app/api/',
     ];
 
+    // Validasi kelompok
     if (!isset($apis[$kelompok])) {
-        return response()->json(['error' => 'Kelompok tidak dikenal'], 404);
+        return response()->json(['error' => "Kelompok '$kelompok' tidak dikenal"], 404);
     }
 
+    // Rakit URL akhir
     $base = rtrim($apis[$kelompok], '/');
-    $url = str_starts_with((string)$endpoint, '?')
-        ? $base . $endpoint
-        : $base . '/' . ltrim((string)$endpoint, '/');
+    $url = $base . ($endpoint ? '/' . ltrim($endpoint, '/') : '');
 
-    $method = request()->method();
+    // Method dan body request
+    $method = strtoupper(request()->method());
     $options = [];
 
     if (!empty(request()->all())) {
@@ -98,15 +98,21 @@ Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/proxy/{kelompok}/{endp
             'Content-Type' => 'application/json',
         ])->send($method, $url, $options);
 
-        $type = $response->header('Content-Type');
-        if ($type && str_contains($type, 'application/json')) {
+        $contentType = $response->header('Content-Type', 'application/json');
+
+        // Kirim balik hasil response
+        if (str_contains($contentType, 'application/json')) {
             return response()->json($response->json(), $response->status());
+        } else {
+            return response($response->body(), $response->status())
+                ->header('Content-Type', $contentType);
         }
-        return response($response->body(), $response->status())
-            ->header('Content-Type', $type ?? 'text/plain');
     } catch (\Throwable $e) {
         return response()->json([
             'error' => 'Proxy gagal: ' . $e->getMessage(),
-        ], 502);
+            'url' => $url,
+            'method' => $method,
+            'data' => request()->all(),
+        ], 500);
     }
 });
