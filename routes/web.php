@@ -57,3 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Authentication routes
 require __DIR__.'/auth.php';
+
+Route::get('/crud', function () {
+    return view('crud.index');
+});
+
