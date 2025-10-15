@@ -4,37 +4,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel CORS Configuration
+    | Laravel CORS Configuration (Perbaikan)
     |--------------------------------------------------------------------------
     |
-    | File ini mengatur siapa saja dan method HTTP apa saja yang boleh
-    | mengakses API kamu dari luar domain (misalnya dari dashboard kolaborasi).
+    | Pengaturan ini memastikan API kamu bisa diakses dari domain lain seperti
+    | dashboard kolaborasi atau localhost tanpa error "CORS policy" lagi.
     |
     */
 
+    // Path yang diizinkan untuk CORS (semua endpoint API)
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    // Izinkan semua method (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+    // Izinkan semua method HTTP (GET, POST, PUT, PATCH, DELETE, OPTIONS)
     'allowed_methods' => ['*'],
 
-    // Izinkan semua domain untuk akses (dashboard, Railway, localhost, dll)
+    // Izinkan semua domain (Railway, localhost, dsb)
     'allowed_origins' => ['*'],
 
-    // Jika kamu ingin lebih aman, kamu bisa ganti jadi spesifik, misal:
-    // 'allowed_origins' => ['https://projek5-production.up.railway.app'],
-
+    // Pola domain tambahan (tidak wajib)
     'allowed_origins_patterns' => [],
 
-    // Izinkan semua header
-    'allowed_headers' => ['*'],
+    // Header yang diizinkan dikirim dari frontend
+    'allowed_headers' => ['Content-Type', 'X-Requested-With', 'Authorization', 'Accept', 'Origin'],
 
-    // Header yang boleh dibaca oleh client
+    // Header yang boleh dilihat oleh client
     'exposed_headers' => ['Authorization', 'Content-Type'],
 
-    // Simpan preflight result (OPTIONS) selama 1 jam
+    // Cache preflight result (OPTIONS) selama 1 jam (3600 detik)
     'max_age' => 3600,
 
-    // Jangan pakai credential (true bisa bikin error kalau cross-domain)
+    // Credential (cookie, session) dimatikan agar tidak error cross-domain
     'supports_credentials' => false,
 
 ];
