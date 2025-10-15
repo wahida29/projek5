@@ -4,36 +4,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel CORS Configuration (Perbaikan)
+    | Laravel CORS Configuration (Final)
     |--------------------------------------------------------------------------
     |
-    | Pengaturan ini memastikan API kamu bisa diakses dari domain lain seperti
-    | dashboard kolaborasi atau localhost tanpa error "CORS policy" lagi.
+    | Pengaturan ini memastikan API Laravel kamu dapat diakses lintas domain
+    | (misalnya dari dashboard kolaborasi, frontend React/Vue, atau file HTML).
+    | Konfigurasi ini sangat fleksibel untuk environment Railway.
     |
     */
 
-    // Path yang diizinkan untuk CORS (semua endpoint API)
+    // Izinkan semua endpoint API dan route sanctum
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    // Izinkan semua method HTTP (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+    // Izinkan semua metode HTTP
     'allowed_methods' => ['*'],
 
-    // Izinkan semua domain (Railway, localhost, dsb)
+    // Izinkan semua asal domain (localhost, Railway, Netlify, dll)
     'allowed_origins' => ['*'],
 
-    // Pola domain tambahan (tidak wajib)
+    // Pola domain tambahan (tidak wajib, bisa dikosongkan)
     'allowed_origins_patterns' => [],
 
-    // Header yang diizinkan dikirim dari frontend
-    'allowed_headers' => ['Content-Type', 'X-Requested-With', 'Authorization', 'Accept', 'Origin'],
+    // Header yang diizinkan dikirim dari client
+    'allowed_headers' => ['*'],
 
-    // Header yang boleh dilihat oleh client
-    'exposed_headers' => ['Authorization', 'Content-Type'],
+    // Header yang bisa dilihat oleh client
+    'exposed_headers' => [],
 
-    // Cache preflight result (OPTIONS) selama 1 jam (3600 detik)
+    // Simpan hasil preflight (OPTIONS) selama 1 jam
     'max_age' => 3600,
 
-    // Credential (cookie, session) dimatikan agar tidak error cross-domain
+    // Nonaktifkan credential (karena tidak perlu cookie lintas domain)
     'supports_credentials' => false,
-
 ];
