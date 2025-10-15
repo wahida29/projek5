@@ -122,7 +122,7 @@
   </div>
 </div>
 
-<!-- ==================== MODAL FORM ==================== -->
+<!-- ==================== MODAL ==================== -->
 <div class="modal fade" id="crudModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -142,7 +142,7 @@
 </div>
 
 <script>
-/* ================== KONFIGURASI PROXY ================== */
+/* =============== KONFIGURASI PROXY =============== */
 const API_K3     = "/proxy/k3";
 const API_K4     = "/proxy/k4";
 const API_K5     = "/proxy/k5";
@@ -151,7 +151,7 @@ const API_JB     = "/proxy/justbuy";
 const API_RES    = "/proxy/reservasi";
 const API_PUBLIC = "https://jsonplaceholder.typicode.com/posts";
 
-/* ================== FETCH HELPER ================== */
+/* =============== FETCH HELPER =============== */
 async function safeFetch(url, opt={}) {
   const res = await fetch(url, opt);
   if (!res.ok) throw new Error(`${res.status} ${url}`);
@@ -159,7 +159,7 @@ async function safeFetch(url, opt={}) {
   return ct.includes('application/json') ? res.json() : res.text();
 }
 
-/* ================== BUILD TABLE GENERIC ================== */
+/* =============== BUILD TABLE =============== */
 function buildTable({id, theadClass, columns, rows, actions}) {
   const el = document.getElementById(id);
   if (!rows || rows.length === 0) {
@@ -171,9 +171,38 @@ function buildTable({id, theadClass, columns, rows, actions}) {
   el.innerHTML = `<div class="table-responsive"><table class="table table-striped table-hover">${head}${body}</table></div>`;
 }
 
-/* ================== CRUD MODAL ================== */
-// ... (potongan selanjutnya dari modal dan fungsi load persis seperti milikmu)
+/* =============== LOAD DATA CAFFESHOP FIX =============== */
+async function loadK5(){
+  const el = document.getElementById('tableK5');
+  el.innerHTML = '⏳ Memuat data...';
+  try {
+    const kopi = await safeFetch(`${API_K5}/kopi`);
+    const non  = await safeFetch(`${API_K5}/nonkopi`);
 
+    // ✅ handle struktur {status, data}
+    const kopiData = Array.isArray(kopi) ? kopi : (kopi.data || []);
+    const nonData  = Array.isArray(non)  ? non  : (non.data || []);
+    const rows = [...kopiData.map(x=>({...x,category:'kopi'})), ...nonData.map(x=>({...x,category:'nonkopi'}))];
+
+    buildTable({
+      id:'tableK5', theadClass:'table-dark',
+      columns:[
+        {key:'id',label:'ID'},
+        {key:'name',label:'Nama'},
+        {key:'description',label:'Deskripsi'},
+        {key:'price',label:'Harga'},
+        {key:'category',label:'Kategori'}
+      ],
+      rows
+    });
+  } catch(e){
+    el.innerHTML = `<div class='alert alert-danger'>⚠️ Gagal memuat data CaffeShop.<br>${e}</div>`;
+    console.error(e);
+  }
+}
+
+/* =============== INISIAL LOAD =============== */
+document.addEventListener('DOMContentLoaded', loadK5);
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
