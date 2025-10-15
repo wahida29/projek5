@@ -61,4 +61,26 @@ require __DIR__.'/auth.php';
 Route::get('/crud', function () {
     return view('crud.index');
 });
+use Illuminate\Support\Facades\Http;
+
+Route::get('/proxy/{kelompok}/{endpoint?}', function ($kelompok, $endpoint = '') {
+    $apis = [
+        'k3' => 'https://gadgethouse-production.up.railway.app/api/',
+        'k4' => 'https://projekkelompok4-production-3d9b.up.railway.app/api/',
+        'k5' => 'https://projek5-production.up.railway.app/api/',
+        'promo' => 'https://sobatpromo-api-production.up.railway.app/api.php?action=list',
+        'justbuy' => 'https://justbuy-production.up.railway.app/api/',
+        'reservasi' => 'https://reservasi-production.up.railway.app/api/',
+    ];
+
+    $base = $apis[$kelompok] ?? null;
+    if (!$base) abort(404);
+
+    try {
+        $response = Http::get($base . $endpoint);
+        return $response->json();
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Gagal menghubungi API ' . $kelompok], 500);
+    }
+});
 
