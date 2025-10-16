@@ -32,15 +32,15 @@
 
   <!-- ============ Konfigurasi endpoint (ubah di sini jika perlu) ============ -->
   <script>
-    // ✅ Yang SUDAH benar dari koleksi kamu:
+    // ✅ Sesuaikan BASE sesuai Railway kalian
     const BASE = {
-      SOBAT_PROMO : "https://sobatpromo-api-production.up.railway.app/api.php", // asumsi actions via query ?action=
-      JUSTBUY      : "https://projekkelompok9-production.up.railway.app/api",   // ganti sesuai koleksi final kalian
-      GADGET       : "https://your-gadget-house-api.example.com/api",           // TODO: ganti (dari koleksi)
-      KRUSIT       : "https://projekkelompok4-production-3d9b.up.railway.app/api",
-      COFFEESHOP   : "https://projek5-production.up.railway.app/api",
-      RESERVASI    : "https://your-reservasi-api.example.com/api",              // TODO: ganti (dari koleksi)
-      MAGURU       : "http://localhost:3001/api/public"                         // ganti jika sudah di-host
+      SOBAT_PROMO : "https://sobatpromo-api-production.up.railway.app/api.php", // ?action=list|create|update|delete
+      JUSTBUY     : "https://projekkelompok9-production.up.railway.app/api",    // /accounts
+      GADGET      : "https://your-gadget-house-api.example.com/api",            // /products
+      KRUSIT      : "https://projekkelompok4-production-3d9b.up.railway.app/api", // /makanan, /minuman
+      COFFEESHOP  : "https://projek5-production.up.railway.app/api",            // /kopi, /nonkopi
+      RESERVASI   : "https://your-reservasi-api.example.com/api",               // /reservasi
+      MAGURU      : "http://localhost:3001/api/public"                          // /products, /categories
     };
   </script>
   <!-- ====================================================================== -->
@@ -348,7 +348,7 @@
             <div class="table-responsive">
               <table class="table table-bordered align-middle text-center" id="tbl7b">
                 <thead><tr><th>ID</th><th>Nama</th><th>Slug</th><th>Aksi</th></tr></thead>
-                <tbody><tr><td colspan="4" class="muted">Memuat…</td></tr></tbody>
+                <tbody><tr><td colspan="4" class="muted">Tidak ada data</td></tr></tbody>
               </table>
             </div>
           </div></div>
@@ -406,7 +406,7 @@ fillEndpointBadges();
 /* ====================================================== */
 
 /* ===================== SOBATPROMO ===================== */
-// asumsi pola: ?action=list|create|update|delete, payload via JSON/FormData
+// ?action=list|create|update|delete
 let sp_editId = null;
 async function loadSp(){
   const url = `${BASE.SOBAT_PROMO}?action=list`;
@@ -455,10 +455,8 @@ form1.addEventListener('submit', async (e)=>{
 reload1.addEventListener('click', loadSp);
 
 /* ======================= JUSTBUY ====================== */
-// NOTE: isi sesuai PHP API kalian. Di sini hanya kerangka agar tabel hidup.
 async function loadJustBuy(){
   try{
-    // contoh GET semua akun:
     const data = await api('GET', `${BASE.JUSTBUY}/accounts`);
     const rows = Array.isArray(data)?data:(data?.data||[]);
     tbl2.querySelector('tbody').innerHTML = rows.length ? rows.map((u,i)=>`
@@ -470,7 +468,7 @@ async function loadJustBuy(){
         </td>
       </tr>`).join('') : `<tr><td colspan="4" class="muted">Belum ada data</td></tr>`;
   }catch(e){
-    tbl2.querySelector('tbody').innerHTML = `<tr><td colspan="4" class="text-danger">Sesuaikan endpoint JUSTBUY (lihat koleksi). ${e.message}</td></tr>`;
+    tbl2.querySelector('tbody').innerHTML = `<tr><td colspan="4" class="text-danger">Sesuaikan endpoint JUSTBUY. ${e.message}</td></tr>`;
   }
 }
 function jbEdit(id,uname,email){
