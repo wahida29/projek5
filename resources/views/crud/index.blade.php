@@ -36,10 +36,10 @@
     const BASE = {
       SOBAT_PROMO : "https://sobatpromo-api-production.up.railway.app/api.php", // asumsi actions via query ?action=
       JUSTBUY      : "https://projekkelompok9-production.up.railway.app/api",   // ganti sesuai koleksi final kalian
-      GADGET       : "https://your-gadget-house-api.example.com/api",           // TODO: ganti (REST: /products)
+      GADGET       : "https://your-gadget-house-api.example.com/api",           // TODO: ganti (dari koleksi)
       KRUSIT       : "https://projekkelompok4-production-3d9b.up.railway.app/api",
       COFFEESHOP   : "https://projek5-production.up.railway.app/api",
-      RESERVASI    : "https://your-reservasi-api.example.com/api",              // TODO: ganti (REST: /reservasi)
+      RESERVASI    : "https://your-reservasi-api.example.com/api",              // TODO: ganti (dari koleksi)
       MAGURU       : "http://localhost:3001/api/public"                         // ganti jika sudah di-host
     };
   </script>
@@ -371,8 +371,8 @@ function notify(type, msg){
 }
 
 // ✅ fetch helper: dukung FormData & JSON
-async function api(method, url, body=null, extraHeaders={}){
-  const opt = { method, headers: { ...extraHeaders } };
+async function api(method, url, body=null){
+  const opt = { method, headers:{} };
   if(body instanceof FormData){
     opt.body = body; // biarkan browser set boundary multipart
   }else if(body){
@@ -385,7 +385,7 @@ async function api(method, url, body=null, extraHeaders={}){
   return ct.includes('application/json') ? res.json() : res.text();
 }
 
-// ✅ helper method override untuk Laravel (PUT/DELETE via POST)
+// ✅ helper method override untuk Laravel/PHP (PUT/DELETE via POST)
 function fdOverride(method, data={}){
   const fd = new FormData();
   fd.append('_method', method);
@@ -406,7 +406,7 @@ fillEndpointBadges();
 /* ====================================================== */
 
 /* ===================== SOBATPROMO ===================== */
-// asumsi pola: ?action=list|create|update|delete, payload via FormData POST
+// asumsi pola: ?action=list|create|update|delete, payload via JSON/FormData
 let sp_editId = null;
 async function loadSp(){
   const url = `${BASE.SOBAT_PROMO}?action=list`;
@@ -455,9 +455,10 @@ form1.addEventListener('submit', async (e)=>{
 reload1.addEventListener('click', loadSp);
 
 /* ======================= JUSTBUY ====================== */
-// gunakan method override bila PUT/DELETE diblok
+// NOTE: isi sesuai PHP API kalian. Di sini hanya kerangka agar tabel hidup.
 async function loadJustBuy(){
   try{
+    // contoh GET semua akun:
     const data = await api('GET', `${BASE.JUSTBUY}/accounts`);
     const rows = Array.isArray(data)?data:(data?.data||[]);
     tbl2.querySelector('tbody').innerHTML = rows.length ? rows.map((u,i)=>`
