@@ -8,19 +8,26 @@ class Kernel extends HttpKernel
 {
     /**
      * 🌍 Daftar middleware global aplikasi.
-     * Middleware ini dijalankan di setiap request.
+     * Middleware ini dijalankan di setiap request — termasuk API & Web.
      */
     protected $middleware = [
+        // 🔒 Atur proxy & header
         \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class, // ✅ versi Laravel terbaru (ganti Fruitcake)
+
+        // 🌐 Aktifkan CORS global (cukup satu kali di sini)
+        \Illuminate\Http\Middleware\HandleCors::class, // ✅ Versi Laravel 10+ (ganti Fruitcake)
+
+        // 🚧 Maintenance & batasan ukuran request
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+
+        // ✨ Membersihkan input
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
-     * 🚀 Kelompok middleware untuk rute web & api.
+     * 🚀 Kelompok middleware untuk rute Web & API.
      */
     protected $middlewareGroups = [
         'web' => [
@@ -33,12 +40,13 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // 🚦 Batasi request agar aman
+            // ⚡ Batasi request agar aman (rate limit)
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
-            // 🔗 Biar model binding tetap jalan
+
+            // 🔗 Pastikan route binding tetap jalan
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // 🌐 Pastikan CORS juga aktif di API group
-            \Illuminate\Http\Middleware\HandleCors::class,
+
+            // ⚙️ CORS jangan ditambah di sini (sudah aktif global di atas)
         ],
     ];
 

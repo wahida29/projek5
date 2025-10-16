@@ -6,19 +6,54 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Controllers\BarangController;
 
-// ================================================================
-// ORIGINAL ROUTES (TIDAK DIHAPUS) 💎
-// ================================================================
+/*
+|--------------------------------------------------------------------------
+| API ROUTES — Final Versi Fix CRUD CoffeeShop ☕
+|--------------------------------------------------------------------------
+| Semua route ini mendukung:
+| - Akses API (GET/POST/PUT/DELETE)
+| - Akses dari Form HTML (pakai _method PUT/DELETE)
+| - Akses langsung dari frontend (CORS & Railway friendly)
+|--------------------------------------------------------------------------
+*/
 
-Route::put('/kopi/{id}', [BarangController::class, 'apiUpdateKopi']);
-Route::delete('/kopi/{id}', [BarangController::class, 'apiDeleteKopi']);
-Route::put('/nonkopi/{id}', [BarangController::class, 'apiUpdateNonKopi']);
-Route::delete('/nonkopi/{id}', [BarangController::class, 'apiDeleteNonKopi']);
-Route::post('/kopi', [BarangController::class, 'storeKopi']);
-Route::post('/nonkopi', [BarangController::class, 'storeNonKopi']);
-Route::get('/kopi', [BarangController::class, 'apiKopi']);
-Route::get('/nonkopi', [BarangController::class, 'apiNonKopi']);
+// ============================
+// ☕ KOPI ENDPOINTS
+// ============================
 
+// ✅ Ambil semua data kopi
+Route::get('/kopi', [BarangController::class, 'apiKopi'])->name('kopi.index');
+
+// ✅ Tambah kopi baru
+Route::post('/kopi', [BarangController::class, 'storeKopi'])->name('kopi.store');
+
+// ✅ Update kopi — bisa PUT atau POST + _method=PUT
+Route::match(['put', 'post'], '/kopi/{id}', [BarangController::class, 'apiUpdateKopi'])->name('kopi.update');
+
+// ✅ Hapus kopi — bisa DELETE atau POST + _method=DELETE
+Route::match(['delete', 'post'], '/kopi/{id}', [BarangController::class, 'apiDeleteKopi'])->name('kopi.delete');
+
+
+// ============================
+// 🧋 NON KOPI ENDPOINTS
+// ============================
+
+// ✅ Ambil semua data nonkopi
+Route::get('/nonkopi', [BarangController::class, 'apiNonKopi'])->name('nonkopi.index');
+
+// ✅ Tambah nonkopi baru
+Route::post('/nonkopi', [BarangController::class, 'storeNonKopi'])->name('nonkopi.store');
+
+// ✅ Update nonkopi — bisa PUT atau POST + _method=PUT
+Route::match(['put', 'post'], '/nonkopi/{id}', [BarangController::class, 'apiUpdateNonKopi'])->name('nonkopi.update');
+
+// ✅ Hapus nonkopi — bisa DELETE atau POST + _method=DELETE
+Route::match(['delete', 'post'], '/nonkopi/{id}', [BarangController::class, 'apiDeleteNonKopi'])->name('nonkopi.delete');
+
+
+// ================================================================
+// 🔐 LOGIN API
+// ================================================================
 Route::post('/login', function (Request $request) {
     $request->validate([
         'email'    => 'required|email',
@@ -38,42 +73,4 @@ Route::post('/login', function (Request $request) {
         'status'  => 'error',
         'message' => 'Email atau password salah',
     ], 401);
-})->withoutMiddleware(['auth:sanctum', 'auth:api']); // 🚀 penting
-
-
-// ================================================================
-// ✅ TAMBAHAN PERBAIKAN UNTUK FORM HTML (AGAR EDIT/DELETE BERFUNGSI)
-// ================================================================
-//
-// Keterangan:
-// HTML `index.blade.php` kamu mengirim request pakai FormData (method POST)
-// dengan field `_method=PUT` atau `_method=DELETE`.
-// Laravel default hanya menerima PUT/DELETE murni dari Postman,
-// jadi kita tambahkan versi `Route::match(['put','post'],...)`
-// supaya keduanya diterima tanpa mengubah kode lama.
-//
-// ================================================================
-
-// --- KOPI ---
-Route::match(['put', 'post'], '/kopi/{id}', [BarangController::class, 'apiUpdateKopi'])
-    ->name('kopi.update.html');
-Route::match(['delete', 'post'], '/kopi/{id}', [BarangController::class, 'apiDeleteKopi'])
-    ->name('kopi.delete.html');
-
-// --- NON KOPI ---
-Route::match(['put', 'post'], '/nonkopi/{id}', [BarangController::class, 'apiUpdateNonKopi'])
-    ->name('nonkopi.update.html');
-Route::match(['delete', 'post'], '/nonkopi/{id}', [BarangController::class, 'apiDeleteNonKopi'])
-    ->name('nonkopi.delete.html');
-
-// ================================================================
-// Penjelasan:
-// Sekarang Laravel akan menerima:
-// - PUT /kopi/{id}  ✅ (Postman)
-// - POST /kopi/{id} + _method=PUT ✅ (Form HTML)
-// - DELETE /kopi/{id} ✅
-// - POST /kopi/{id} + _method=DELETE ✅
-//
-// Jadi tombol Edit dan Delete di dashboard index.blade.php
-// bisa berfungsi di Railway maupun localhost tanpa error 405.
-// ================================================================
+})->withoutMiddleware(['auth:sanctum', 'auth:api']);
