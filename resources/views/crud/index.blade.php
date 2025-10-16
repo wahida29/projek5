@@ -36,10 +36,10 @@
     const BASE = {
       SOBAT_PROMO : "https://sobatpromo-api-production.up.railway.app/api.php", // asumsi actions via query ?action=
       JUSTBUY      : "https://projekkelompok9-production.up.railway.app/api",   // ganti sesuai koleksi final kalian
-      GADGET       : "https://your-gadget-house-api.example.com/api",           // TODO: ganti (dari koleksi)
+      GADGET       : "https://your-gadget-house-api.example.com/api",           // TODO: ganti (REST: /products)
       KRUSIT       : "https://projekkelompok4-production-3d9b.up.railway.app/api",
       COFFEESHOP   : "https://projek5-production.up.railway.app/api",
-      RESERVASI    : "https://your-reservasi-api.example.com/api",              // TODO: ganti (dari koleksi)
+      RESERVASI    : "https://your-reservasi-api.example.com/api",              // TODO: ganti (REST: /reservasi)
       MAGURU       : "http://localhost:3001/api/public"                         // ganti jika sudah di-host
     };
   </script>
@@ -369,14 +369,30 @@ function notify(type, msg){
   alertBox.classList.remove('d-none');
   setTimeout(()=>alertBox.classList.add('d-none'), 2500);
 }
-async function api(method, url, body=null){
-  const opt = { method, headers:{'Content-Type':'application/json'} };
-  if(body) opt.body = JSON.stringify(body);
+
+// ✅ fetch helper: dukung FormData & JSON
+async function api(method, url, body=null, extraHeaders={}){
+  const opt = { method, headers: { ...extraHeaders } };
+  if(body instanceof FormData){
+    opt.body = body; // biarkan browser set boundary multipart
+  }else if(body){
+    opt.headers['Content-Type'] = 'application/json';
+    opt.body = JSON.stringify(body);
+  }
   const res = await fetch(url, opt);
   if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const ct = res.headers.get('content-type')||'';
   return ct.includes('application/json') ? res.json() : res.text();
 }
+
+// ✅ helper method override untuk Laravel (PUT/DELETE via POST)
+function fdOverride(method, data={}){
+  const fd = new FormData();
+  fd.append('_method', method);
+  for(const k in data){ fd.append(k, data[k]); }
+  return fd;
+}
+
 function fillEndpointBadges(){
   ep1.textContent = BASE.SOBAT_PROMO;
   ep2.textContent = BASE.JUSTBUY;
@@ -390,7 +406,7 @@ fillEndpointBadges();
 /* ====================================================== */
 
 /* ===================== SOBATPROMO ===================== */
-// asumsi pola: ?action=list|create|update|delete, payload via JSON
+// asumsi pola: ?action=list|create|update|delete, payload via FormData POST
 let sp_editId = null;
 async function loadSp(){
   const url = `${BASE.SOBAT_PROMO}?action=list`;
@@ -415,6 +431,7 @@ async function loadSp(){
 function spStartEdit(id,title,desc,until){
   sp_editId = id;
   p1_title.value = title; p1_desc.value = desc; p1_until.value = (until||"").substring(0,10);
+  notify('info','Mode edit aktif — ubah data lalu klik Simpan');
 }
 async function spDelete(id){
   if(!confirm("Hapus promo ini?")) return;
@@ -425,27 +442,29 @@ async function spDelete(id){
 }
 form1.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const payload = { title:p1_title.value, description:p1_desc.value, valid_until:p1_until.value };
+  const fd = new FormData();
+  fd.append("title", p1_title.value);
+  fd.append("description", p1_desc.value);
+  fd.append("valid_until", p1_until.value);
   const action = sp_editId==null ? 'create' : `update&id=${sp_editId}`;
   try{
-    await api('POST', `${BASE.SOBAT_PROMO}?action=${action}`, payload);
+    await api('POST', `${BASE.SOBAT_PROMO}?action=${action}`, fd);
     sp_editId=null; form1.reset(); notify('success','Tersimpan'); loadSp();
   }catch(err){ notify('danger', err.message); }
 });
 reload1.addEventListener('click', loadSp);
 
 /* ======================= JUSTBUY ====================== */
-// NOTE: isi sesuai PHP API kalian. Di sini hanya kerangka agar tabel hidup.
+// gunakan method override bila PUT/DELETE diblok
 async function loadJustBuy(){
   try{
-    // contoh GET semua akun:
     const data = await api('GET', `${BASE.JUSTBUY}/accounts`);
     const rows = Array.isArray(data)?data:(data?.data||[]);
     tbl2.querySelector('tbody').innerHTML = rows.length ? rows.map((u,i)=>`
       <tr>
         <td>${i+1}</td><td>${u.username||''}</td><td>${u.email||''}</td>
         <td>
-          <button class="btn btn-warning btn-sm" onclick='jbEdit("${u.id}")'><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-warning btn-sm" onclick='jbEdit("${u.id}","${(u.username||"").replace(/"/g,"&quot;")}","${(u.email||"").replace(/"/g,"&quot;")}")'><i class="bi bi-pencil-square"></i></button>
           <button class="btn btn-danger btn-sm" onclick='jbDel("${u.id}")'><i class="bi bi-trash3"></i></button>
         </td>
       </tr>`).join('') : `<tr><td colspan="4" class="muted">Belum ada data</td></tr>`;
@@ -453,20 +472,24 @@ async function loadJustBuy(){
     tbl2.querySelector('tbody').innerHTML = `<tr><td colspan="4" class="text-danger">Sesuaikan endpoint JUSTBUY (lihat koleksi). ${e.message}</td></tr>`;
   }
 }
-async function jbEdit(id){
-  j_id.value = id;
-  notify('info','Mode edit: isi form lalu klik tombol kuning.');
+function jbEdit(id,uname,email){
+  j_id.value = id; j_username.value = uname; j_email.value = email;
+  notify('info','Mode edit: ubah field, lalu klik tombol kuning.');
 }
 j_add.addEventListener('click', async ()=>{
   try{
-    await api('POST', `${BASE.JUSTBUY}/accounts`, {username:j_username.value,email:j_email.value});
+    const fd = new FormData();
+    fd.append('username', j_username.value);
+    fd.append('email', j_email.value);
+    await api('POST', `${BASE.JUSTBUY}/accounts`, fd);
     notify('success','Ditambahkan'); loadJustBuy(); form2.reset();
   }catch(e){ notify('danger', e.message); }
 });
 j_edit.addEventListener('click', async ()=>{
   if(!j_id.value) return notify('warning','Isi ID dulu');
   try{
-    await api('PUT', `${BASE.JUSTBUY}/accounts/${j_id.value}`, {username:j_username.value,email:j_email.value});
+    const fd = fdOverride('PUT', { username:j_username.value, email:j_email.value });
+    await api('POST', `${BASE.JUSTBUY}/accounts/${j_id.value}`, fd);
     notify('success','Diubah'); loadJustBuy(); form2.reset();
   }catch(e){ notify('danger', e.message); }
 });
@@ -474,7 +497,8 @@ j_del.addEventListener('click', async ()=>{
   if(!j_id.value) return notify('warning','Isi ID dulu');
   if(!confirm('Hapus data ini?')) return;
   try{
-    await api('DELETE', `${BASE.JUSTBUY}/accounts/${j_id.value}`);
+    const fd = fdOverride('DELETE');
+    await api('POST', `${BASE.JUSTBUY}/accounts/${j_id.value}`, fd);
     notify('success','Dihapus'); loadJustBuy(); form2.reset();
   }catch(e){ notify('danger', e.message); }
 });
@@ -497,19 +521,23 @@ async function loadGadget(){
     tbl3.querySelector('tbody').innerHTML = `<tr><td colspan="5" class="text-danger">Ganti BASE.GADGET agar aktif. ${e.message}</td></tr>`;
   }
 }
-function gStart(id,name,brand,price){ g_id.value=id; g_name.value=name; g_brand.value=brand; g_price.value=price; }
+function gStart(id,name,brand,price){ g_id.value=id; g_name.value=name; g_brand.value=brand; g_price.value=price; notify('info','Mode edit produk aktif'); }
 form3.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body= { name:g_name.value, brand:g_brand.value, price:Number(g_price.value||0) };
+  const isEdit = !!g_id.value;
   try{
-    if(g_id.value) await api('PUT', `${BASE.GADGET}/products/${g_id.value}`, body);
-    else await api('POST', `${BASE.GADGET}/products`, body);
+    const fd = isEdit
+      ? fdOverride('PUT', { name:g_name.value, brand:g_brand.value, price:g_price.value })
+      : (()=>{ const t=new FormData(); t.append('name',g_name.value); t.append('brand',g_brand.value); t.append('price',g_price.value); return t; })();
+
+    const url = isEdit ? `${BASE.GADGET}/products/${g_id.value}` : `${BASE.GADGET}/products`;
+    await api('POST', url, fd);
     notify('success','Tersimpan'); g_id.value=''; form3.reset(); loadGadget();
   }catch(err){ notify('danger', err.message); }
 });
 async function gDel(id){
   if(!confirm('Hapus data?')) return;
-  try{ await api('DELETE', `${BASE.GADGET}/products/${id}`); notify('success','Dihapus'); loadGadget(); }
+  try{ await api('POST', `${BASE.GADGET}/products/${id}`, fdOverride('DELETE')); notify('success','Dihapus'); loadGadget(); }
   catch(e){ notify('danger', e.message); }
 }
 reload3.addEventListener('click', loadGadget);
@@ -550,27 +578,38 @@ async function loadKrusit(){
 }
 form4a.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body = { name: km_name.value, description: km_desc.value, price: Number(km_price.value||0) };
-  try{ await api('POST', `${BASE.KRUSIT}/makanan`, body); notify('success','Makanan ditambah'); form4a.reset(); loadKrusit(); }
+  const fd = new FormData();
+  fd.append('name', km_name.value);
+  fd.append('description', km_desc.value);
+  fd.append('price', km_price.value);
+  try{ await api('POST', `${BASE.KRUSIT}/makanan`, fd); notify('success','Makanan ditambah'); form4a.reset(); loadKrusit(); }
   catch(err){ notify('danger', err.message); }
 });
 form4b.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body = { name: kmi_name.value, description: kmi_desc.value, price: Number(kmi_price.value||0) };
-  try{ await api('POST', `${BASE.KRUSIT}/minuman`, body); notify('success','Minuman ditambah'); form4b.reset(); loadKrusit(); }
+  const fd = new FormData();
+  fd.append('name', kmi_name.value);
+  fd.append('description', kmi_desc.value);
+  fd.append('price', kmi_price.value);
+  try{ await api('POST', `${BASE.KRUSIT}/minuman`, fd); notify('success','Minuman ditambah'); form4b.reset(); loadKrusit(); }
   catch(err){ notify('danger', err.message); }
 });
 async function kEdit(cat,id,name,desc,price){
   const newName = prompt('Nama', name); if(newName===null) return;
   const newDesc = prompt('Deskripsi', desc); if(newDesc===null) return;
   const newPrice= prompt('Harga', price); if(newPrice===null) return;
-  try{ await api('PUT', `${BASE.KRUSIT}/${cat}/${id}`, {name:newName,description:newDesc,price:Number(newPrice||0)}); notify('success','Diubah'); loadKrusit(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    const fd = fdOverride('PUT', {name:newName,description:newDesc,price:newPrice});
+    await api('POST', `${BASE.KRUSIT}/${cat}/${id}`, fd);
+    notify('success','Diubah'); loadKrusit();
+  } catch(e){ notify('danger', e.message); }
 }
 async function kDel(cat,id){
   if(!confirm('Hapus data?')) return;
-  try{ await api('DELETE', `${BASE.KRUSIT}/${cat}/${id}`); notify('success','Dihapus'); loadKrusit(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    await api('POST', `${BASE.KRUSIT}/${cat}/${id}`, fdOverride('DELETE'));
+    notify('success','Dihapus'); loadKrusit();
+  } catch(e){ notify('danger', e.message); }
 }
 reload4.addEventListener('click', loadKrusit);
 
@@ -610,27 +649,38 @@ async function loadCoffee(){
 }
 form5a.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body = { name: ck_name.value, description: ck_desc.value, price: Number(ck_price.value||0) };
-  try{ await api('POST', `${BASE.COFFEESHOP}/kopi`, body); notify('success','Kopi ditambah'); form5a.reset(); loadCoffee(); }
+  const fd = new FormData();
+  fd.append('name', ck_name.value);
+  fd.append('description', ck_desc.value);
+  fd.append('price', ck_price.value);
+  try{ await api('POST', `${BASE.COFFEESHOP}/kopi`, fd); notify('success','Kopi ditambah'); form5a.reset(); loadCoffee(); }
   catch(err){ notify('danger', err.message); }
 });
 form5b.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body = { name: cn_name.value, description: cn_desc.value, price: Number(cn_price.value||0) };
-  try{ await api('POST', `${BASE.COFFEESHOP}/nonkopi`, body); notify('success','NonKopi ditambah'); form5b.reset(); loadCoffee(); }
+  const fd = new FormData();
+  fd.append('name', cn_name.value);
+  fd.append('description', cn_desc.value);
+  fd.append('price', cn_price.value);
+  try{ await api('POST', `${BASE.COFFEESHOP}/nonkopi`, fd); notify('success','NonKopi ditambah'); form5b.reset(); loadCoffee(); }
   catch(err){ notify('danger', err.message); }
 });
 async function cEdit(cat,id,name,desc,price){
   const newName = prompt('Nama', name); if(newName===null) return;
   const newDesc = prompt('Deskripsi', desc); if(newDesc===null) return;
   const newPrice= prompt('Harga', price); if(newPrice===null) return;
-  try{ await api('PUT', `${BASE.COFFEESHOP}/${cat}/${id}`, {name:newName,description:newDesc,price:Number(newPrice||0)}); notify('success','Diubah'); loadCoffee(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    const fd = fdOverride('PUT', {name:newName,description:newDesc,price:newPrice});
+    await api('POST', `${BASE.COFFEESHOP}/${cat}/${id}`, fd);
+    notify('success','Diubah'); loadCoffee();
+  } catch(e){ notify('danger', e.message); }
 }
 async function cDel(cat,id){
   if(!confirm('Hapus data?')) return;
-  try{ await api('DELETE', `${BASE.COFFEESHOP}/${cat}/${id}`); notify('success','Dihapus'); loadCoffee(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    await api('POST', `${BASE.COFFEESHOP}/${cat}/${id}`, fdOverride('DELETE'));
+    notify('success','Dihapus'); loadCoffee();
+  } catch(e){ notify('danger', e.message); }
 }
 reload5.addEventListener('click', loadCoffee);
 
@@ -653,9 +703,12 @@ async function loadReservasi(){
 }
 form6.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const body={ name:r_nama.value, phone:r_telp.value, datetime:r_waktu.value };
+  const fd=new FormData();
+  fd.append('name', r_nama.value);
+  fd.append('phone', r_telp.value);
+  fd.append('datetime', r_waktu.value);
   try{
-    await api('POST', `${BASE.RESERVASI}/reservasi`, body);
+    await api('POST', `${BASE.RESERVASI}/reservasi`, fd);
     notify('success','Reservasi disimpan'); form6.reset(); loadReservasi();
   }catch(err){ notify('danger', err.message); }
 });
@@ -663,13 +716,17 @@ async function rEdit(id,nama,telp,waktu){
   const n = prompt('Nama', nama); if(n===null) return;
   const t = prompt('Telepon', telp); if(t===null) return;
   const w = prompt('Waktu (YYYY-MM-DD HH:mm)', waktu); if(w===null) return;
-  try{ await api('PUT', `${BASE.RESERVASI}/reservasi/${id}`, {name:n,phone:t,datetime:w}); notify('success','Diubah'); loadReservasi(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    await api('POST', `${BASE.RESERVASI}/reservasi/${id}`, fdOverride('PUT', {name:n,phone:t,datetime:w}));
+    notify('success','Diubah'); loadReservasi();
+  } catch(e){ notify('danger', e.message); }
 }
 async function rDel(id){
   if(!confirm('Hapus reservasi?')) return;
-  try{ await api('DELETE', `${BASE.RESERVASI}/reservasi/${id}`); notify('success','Dihapus'); loadReservasi(); }
-  catch(e){ notify('danger', e.message); }
+  try{
+    await api('POST', `${BASE.RESERVASI}/reservasi/${id}`, fdOverride('DELETE'));
+    notify('success','Dihapus'); loadReservasi();
+  } catch(e){ notify('danger', e.message); }
 }
 reload6.addEventListener('click', loadReservasi);
 
@@ -710,7 +767,11 @@ async function loadMaguru(){
 form7a.addEventListener('submit', async (e)=>{
   e.preventDefault();
   try{
-    await api('POST', `${BASE.MAGURU}/products`, {name:mp_name.value, description:mp_desc.value, price:Number(mp_price.value||0)});
+    const fd = new FormData();
+    fd.append('name', mp_name.value);
+    fd.append('description', mp_desc.value);
+    fd.append('price', mp_price.value);
+    await api('POST', `${BASE.MAGURU}/products`, fd);
     notify('success','Product ditambah'); form7a.reset(); loadMaguru();
   }catch(err){ notify('danger', err.message); }
 });
@@ -718,31 +779,42 @@ async function mPEdit(id,name,desc,price){
   const n=prompt('Nama',name); if(n===null) return;
   const d=prompt('Deskripsi',desc); if(d===null) return;
   const p=prompt('Harga',price); if(p===null) return;
-  try{ await api('PUT', `${BASE.MAGURU}/products/${id}`, {name:n,description:d,price:Number(p||0)}); notify('success','Diubah'); loadMaguru(); }
-  catch(e){ notify('danger',e.message); }
+  try{
+    await api('POST', `${BASE.MAGURU}/products/${id}`, fdOverride('PUT', {name:n,description:d,price:p}));
+    notify('success','Diubah'); loadMaguru();
+  } catch(e){ notify('danger',e.message); }
 }
 async function mPDel(id){
   if(!confirm('Hapus product?')) return;
-  try{ await api('DELETE', `${BASE.MAGURU}/products/${id}`); notify('success','Dihapus'); loadMaguru(); }
-  catch(e){ notify('danger',e.message); }
+  try{
+    await api('POST', `${BASE.MAGURU}/products/${id}`, fdOverride('DELETE'));
+    notify('success','Dihapus'); loadMaguru();
+  } catch(e){ notify('danger',e.message); }
 }
 form7b.addEventListener('submit', async (e)=>{
   e.preventDefault();
   try{
-    await api('POST', `${BASE.MAGURU}/categories`, {name:mc_name.value, slug:mc_slug.value});
+    const fd = new FormData();
+    fd.append('name', mc_name.value);
+    fd.append('slug', mc_slug.value);
+    await api('POST', `${BASE.MAGURU}/categories`, fd);
     notify('success','Category ditambah'); form7b.reset(); loadMaguru();
   }catch(err){ notify('danger', err.message); }
 });
 async function mCEdit(id,name,slug){
   const n=prompt('Nama',name); if(n===null) return;
   const s=prompt('Slug',slug); if(s===null) return;
-  try{ await api('PUT', `${BASE.MAGURU}/categories/${id}`, {name:n,slug:s}); notify('success','Diubah'); loadMaguru(); }
-  catch(e){ notify('danger',e.message); }
+  try{
+    await api('POST', `${BASE.MAGURU}/categories/${id}`, fdOverride('PUT', {name:n,slug:s}));
+    notify('success','Diubah'); loadMaguru();
+  } catch(e){ notify('danger',e.message); }
 }
 async function mCDel(id){
   if(!confirm('Hapus category?')) return;
-  try{ await api('DELETE', `${BASE.MAGURU}/categories/${id}`); notify('success','Dihapus'); loadMaguru(); }
-  catch(e){ notify('danger',e.message); }
+  try{
+    await api('POST', `${BASE.MAGURU}/categories/${id}`, fdOverride('DELETE'));
+    notify('success','Dihapus'); loadMaguru();
+  } catch(e){ notify('danger',e.message); }
 }
 reload7.addEventListener('click', loadMaguru);
 
