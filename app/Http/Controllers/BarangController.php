@@ -30,7 +30,6 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -39,35 +38,25 @@ class BarangController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle upload gambar
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('menus', 'public');
             $validated['image'] = $path;
         }
 
-        // Simpan data ke database
         Menu::create($validated);
-
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         $menu = Menu::findOrFail($id);
         return view('barang.edit', compact('menu'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $menu = Menu::findOrFail($id);
 
-        // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -76,9 +65,7 @@ class BarangController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle upload gambar baru
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
             if ($menu->image) {
                 Storage::disk('public')->delete($menu->image);
             }
@@ -86,166 +73,175 @@ class BarangController extends Controller
             $validated['image'] = $path;
         }
 
-        // Update data di database
         $menu->update($validated);
-
         return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $menu = Menu::findOrFail($id);
-
-        // Hapus gambar jika ada
         if ($menu->image) {
             Storage::disk('public')->delete($menu->image);
         }
-
-        // Hapus data dari database
         $menu->delete();
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus');
     }
+
+    // =======================================================
+    // VIEW UNTUK KATEGORI
+    // =======================================================
     public function showKopi()
-{
-    $menus = Menu::where('category', 'kopi')->get();
-    return view('kopi', compact('menus'));
-}
+    {
+        $menus = Menu::where('category', 'kopi')->get();
+        return view('kopi', compact('menus'));
+    }
 
-public function showNonKopi()
-{
-    $menus = Menu::where('category', 'nonkopi')->get();
-    return view('nonkopi', compact('menus'));
-}
-public function apiKopi()
-{
-    $kopi = menu::where('category', 'kopi')->get();
-    return response()->json([
-        'status' => 'success',
-        'data' => $kopi
-    ]);
-}
+    public function showNonKopi()
+    {
+        $menus = Menu::where('category', 'nonkopi')->get();
+        return view('nonkopi', compact('menus'));
+    }
 
-public function apiNonKopi()
-{
-    $nonkopi = menu::where('category', 'nonkopi')->get();
-    return response()->json([
-        'status' => 'success',
-        'data' => $nonkopi
-    ]);
-}
-public function storeKopi(Request $request)
-{
-    $request->validate([
-    'name' => 'required|string|max:255',
-    'description' => 'nullable|string',
-    'price' => 'required|numeric',
-    'image' => 'nullable|string',
-]);
+    // =======================================================
+    // API UNTUK KOPI DAN NONKOPI
+    // =======================================================
+    public function apiKopi()
+    {
+        $kopi = Menu::where('category', 'kopi')->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $kopi
+        ]);
+    }
 
-    $barang = Menu::create([
-        'name' => $request->name,
-        'description' => $request->description,
-        'category' => 'kopi',
-        'price' => $request->price,
-        'image' => $request->image,
-    ]);
+    public function apiNonKopi()
+    {
+        $nonkopi = Menu::where('category', 'nonkopi')->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $nonkopi
+        ]);
+    }
 
-    return response()->json([
-        'status' => 'success',
-        'data' => $barang
-    ], 201);
-}
+    public function storeKopi(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image' => 'nullable|string',
+        ]);
 
-public function storeNonKopi(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'required|numeric',
-        'image' => 'nullable|string',
-    ]);
+        $barang = Menu::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category' => 'kopi',
+            'price' => $request->price,
+            'image' => $request->image,
+        ]);
 
-    $barang = Menu::create([
-        'name' => $request->name,
-        'description' => $request->description,
-        'category' => 'nonkopi',
-        'price' => $request->price,
-        'image' => $request->image,
-    ]);
+        return response()->json([
+            'status' => 'success',
+            'data' => $barang
+        ], 201);
+    }
 
-    return response()->json([
-        'status' => 'success',
-        'data' => $barang
-    ], 201);
-}
-public function apiUpdateKopi(Request $request, $id)
-{
-    $barang = Menu::findOrFail($id);
+    public function storeNonKopi(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image' => 'nullable|string',
+        ]);
 
-    $request->validate([
-        'name' => 'sometimes|required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'sometimes|required|numeric',
-        'image' => 'nullable|string'
-    ]);
+        $barang = Menu::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category' => 'nonkopi',
+            'price' => $request->price,
+            'image' => $request->image,
+        ]);
 
-    // Update data biasa
-    $barang->name = $request->name ?? $barang->name;
-    $barang->description = $request->description ?? $barang->description;
-    $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'kopi';
+        return response()->json([
+            'status' => 'success',
+            'data' => $barang
+        ], 201);
+    }
 
-    $barang->save();
-    return response()->json([
-        'status' => 'success',
-        'data' => $barang
-    ], 200);
-}
-public function apiDeleteKopi($id)
-{
-    $barang = Menu::findOrFail($id);
+    // =======================================================
+    // PERBAIKAN: API UPDATE KOPI & NONKOPI
+    // =======================================================
+    public function apiUpdateKopi(Request $request, $id)
+    {
+        $barang = Menu::findOrFail($id);
 
-    $barang->delete();
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Barang berhasil dihapus'
-    ], 200);
-}
-public function apiUpdateNonkopi(Request $request, $id)
-{
-    $barang = Menu::findOrFail($id);
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'sometimes|required|numeric',
+            'image' => 'nullable|string'
+        ]);
 
-    $request->validate([
-        'name' => 'sometimes|required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'sometimes|required|numeric',
-        'image' => 'nullable|string'
-    ]);
+        $barang->update([
+            'name' => $request->name ?? $barang->name,
+            'description' => $request->description ?? $barang->description,
+            'price' => $request->price ?? $barang->price,
+            'category' => 'kopi',
+            'image' => $request->image ?? $barang->image,
+        ]);
 
-    // Update data biasa
-    $barang->name = $request->name ?? $barang->name;
-    $barang->description = $request->description ?? $barang->description;
-    $barang->price = $request->price ?? $barang->price;
-    $barang->category = 'nonkopi';
+        return response()->json([
+            'status' => 'success',
+            'data' => $barang
+        ], 200);
+    }
 
-    $barang->save();
-    return response()->json([
-        'status' => 'success',
-        'data' => $barang
-    ], 200);
-}
-public function apiDeleteNonKopi($id)
-{
-    $barang = Menu::findOrFail($id);
+    public function apiDeleteKopi($id)
+    {
+        $barang = Menu::findOrFail($id);
+        $barang->delete();
 
-    $barang->delete();
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Barang berhasil dihapus'
-    ], 200);
-}
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Barang berhasil dihapus'
+        ], 200);
+    }
+
+    public function apiUpdateNonKopi(Request $request, $id) // ✅ huruf besar konsisten
+    {
+        $barang = Menu::findOrFail($id);
+
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'sometimes|required|numeric',
+            'image' => 'nullable|string'
+        ]);
+
+        $barang->update([
+            'name' => $request->name ?? $barang->name,
+            'description' => $request->description ?? $barang->description,
+            'price' => $request->price ?? $barang->price,
+            'category' => 'nonkopi',
+            'image' => $request->image ?? $barang->image,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $barang
+        ], 200);
+    }
+
+    public function apiDeleteNonKopi($id)
+    {
+        $barang = Menu::findOrFail($id);
+        $barang->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Barang berhasil dihapus'
+        ], 200);
+    }
 }
